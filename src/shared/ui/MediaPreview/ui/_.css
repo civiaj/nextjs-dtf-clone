@@ -1,0 +1,16 @@
+.pswp video {
+    max-width: none;
+}
+
+.pswp__caption {
+    @apply !pointer-events-none absolute bottom-0 left-0 right-0 sm:bottom-4;
+}
+
+.pswp__counter {
+    text-shadow: none;
+    @apply font-medium text-white opacity-100;
+}
+
+.pswp__button {
+    @apply border-white opacity-100;
+}

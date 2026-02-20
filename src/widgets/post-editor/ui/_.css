@@ -1,0 +1,248 @@
+#post-editor {
+    h1 {
+        @apply text-xl font-semibold tracking-tight outline-none sm:text-2xl;
+    }
+
+    h2 {
+        @apply text-lg font-semibold tracking-tight outline-none sm:text-xl;
+    }
+}
+
+.quote-input {
+    line-height: 1.6rem;
+    outline: none;
+}
+
+.codex-editor [data-placeholder]:empty:before,
+.codex-editor [data-placeholder][data-empty='true']::before {
+    position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    display: block;
+    text-overflow: ellipsis;
+}
+
+.codex-editor [data-placeholder-active]:empty:focus:before,
+.codex-editor [data-placeholder-active][data-empty='true']:focus:before {
+    position: absolute;
+    white-space: nowrap;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ce-block {
+    position: relative;
+}
+
+.ce-flags {
+    @apply absolute right-0 top-0 grid grid-cols-2 gap-1 text-active;
+}
+
+.ce-tools {
+    @apply absolute left-0 top-0 opacity-0;
+}
+
+.ce-block:hover {
+    .ce-tools {
+        opacity: 100;
+    }
+}
+
+.ce-block:focus-within {
+    .ce-tools {
+        opacity: 100;
+    }
+}
+
+.cdx-list {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    display: grid;
+    gap: var(--spacing-s);
+    padding: var(--spacing-xs);
+    --spacing-s: 8px;
+    --spacing-xs: 6px;
+    --list-counter-type: numeric;
+    --radius-border: 5px;
+    --checkbox-background: #fff;
+    --color-border: #c9c9c9;
+    --color-bg-checked: #369fff;
+    --line-height: 1.45em;
+    --color-bg-checked-hover: #0059ab;
+    --color-tick: #fff;
+    --size-checkbox: 1.2em;
+}
+
+.cdx-list__item {
+    line-height: var(--line-height);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        'checkbox content'
+        '. child';
+}
+
+.cdx-list__item-children {
+    display: grid;
+    grid-area: child;
+    gap: var(--spacing-s);
+    padding-top: var(--spacing-s);
+}
+
+.cdx-list__item-content[contenteditable] {
+    outline: none;
+}
+
+.cdx-list__item-content {
+    word-break: break-word;
+    white-space: pre-wrap;
+    grid-area: content;
+    padding-left: var(--spacing-s);
+}
+
+.cdx-list-unordered .cdx-list__item::before {
+    content: '•';
+    float: left;
+    color: inherit;
+    font-size: inherit;
+    line-height: var(--line-height);
+}
+
+.cdx-list-ordered {
+    counter-reset: list-counter;
+}
+
+.cdx-list-ordered .cdx-list__item {
+    counter-increment: list-counter;
+}
+
+.cdx-list-ordered .cdx-list__item::before {
+    content: counter(list-counter) '.';
+    float: left;
+    color: inherit;
+    font-size: inherit;
+    line-height: var(--line-height);
+    @apply font-medium;
+}
+
+.ce-code__textarea {
+    min-height: var(--textarea-height);
+    @apply w-full resize-none overflow-hidden bg-inherit px-2 py-1 font-mono text-sm outline-none;
+}
+
+.ce-chars[data-chars] {
+    @apply pr-6;
+}
+
+.ce-chars[data-chars]::before {
+    content: attr(data-chars);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 5px;
+    @apply text-xs font-bold text-foreground;
+}
+
+.ce-chars--danger[data-chars]::before {
+    @apply text-destructive;
+}
+
+.ce-block__content {
+    max-width: 100%;
+    @apply ml-7 mr-14 sm:ml-8 sm:mr-16;
+}
+
+.ce-block--selected .ce-block__content {
+    @apply bg-active/40;
+}
+
+.ce-block {
+    animation: none;
+}
+
+.ce-block__content {
+    transition: none;
+}
+
+.codex-editor__redactor {
+    margin-left: 0;
+}
+
+.ce-popover--inline .ce-popover__container {
+    @apply h-11;
+}
+
+.ce-popover__items {
+    @apply gap-1;
+}
+
+.ce-inline-tool-btn {
+    @apply flex h-8 w-8 items-center justify-center rounded-md hover:bg-active/5;
+}
+.ce-inline-tool-btn--active {
+    @apply bg-active/10 text-active hover:bg-active/15;
+}
+
+.ce-popover__items--link .ce-popover-item-html:not([data-item-name='Link']) {
+    display: none;
+}
+
+.ce-inline-tool-wrapper {
+    @apply flex items-center justify-between gap-1;
+}
+
+.ce-inline-input {
+    @apply h-8 rounded-md border border-border px-2 outline-none;
+}
+
+.ce-inline-input[data-initial]::placeholder {
+    @apply text-foreground;
+}
+
+.ce-block a {
+    @apply !text-active no-underline;
+}
+
+.quote-text-xl {
+    @apply text-2xl font-medium;
+}
+
+.quote-text-md {
+    @apply text-lg font-medium;
+}
+
+.quote-text-sm {
+    @apply text-base font-medium;
+}
+
+.saving-text::after {
+    content: '';
+    animation: dots 0.7s infinite steps(4);
+}
+
+@keyframes dots {
+    0% {
+        content: '';
+    }
+    25% {
+        content: '.';
+    }
+    50% {
+        content: '..';
+    }
+    75% {
+        content: '...';
+    }
+    100% {
+        content: '';
+    }
+}
+
+.ce-media {
+    @apply py-2;
+}

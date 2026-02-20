@@ -1,0 +1,1 @@
+export { AssetsController } from './controller'

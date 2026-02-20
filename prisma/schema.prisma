@@ -1,0 +1,316 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int               @id @default(autoincrement())
+  name          String
+  description   String?
+  email         String            @unique
+  password      String
+  role          UserRole          @default(USER)
+  posts         Post[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  tokens        Token[]
+  blocks        Blocks[]
+  uploads       UserMediaUpload[]
+  avatar        Media?            @relation("UserAvatar", fields: [avatarId], references: [id])
+  avatarId      Int?
+  avatarColor   AvatarColor       @relation(fields: [avatarColorId], references: [id], onDelete: NoAction)
+  avatarColorId Int
+  cover         Media?            @relation("UserCover", fields: [coverId], references: [id])
+  coverId       Int?
+  coverY        Int?
+
+  comments Comment[]
+
+  subscriptions FollowUser[] @relation("FollowUser_subscriber")
+  followers     FollowUser[] @relation("FollowUser_target")
+
+  mutedUsers   MuteUser[] @relation("MuteUser_muter")
+  mutedByUsers MuteUser[] @relation("MuteUser_target")
+  mutedPosts   MutePost[]
+
+  reactedPosts    ReactionPost[]
+  reactedComments ReactionComment[]
+
+  bookmarkedPosts    BookmarkPost[]
+  bookmarkedComments BookmarkComment[]
+
+  @@index([id])
+  @@index([name])
+}
+
+model Post {
+  id                Int            @id @default(autoincrement())
+  slug              String
+  title             String?
+  userId            Int
+  status            PostStatus     @default(DRAFT)
+  user              User           @relation(fields: [userId], references: [id])
+  blocks            Blocks[]
+  publishedAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  comments          Comment[]
+  mutedByUsers      MutePost[]
+  reactedUsers      ReactionPost[]
+  bookmarkedByUsers BookmarkPost[]
+
+  @@unique([slug])
+  @@index([slug])
+  @@index([userId])
+}
+
+model Blocks {
+  id     Int  @id @default(autoincrement())
+  data   Json
+  postId Int
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
+}
+
+model Token {
+  id           String   @id @default(uuid())
+  userId       Int
+  deviceInfo   Json
+  refreshToken String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([id])
+  @@index([id])
+  @@index([userId])
+}
+
+model Media {
+  id             Int               @id @default(autoincrement())
+  original_hash  String
+  processed_hash String
+  type           FileType
+  height         Int
+  width          Int
+  size           Int
+  src            String
+  blurDataURL    String
+  format         FileFormat
+  duration       Int?
+  thumbnail      String?
+  uploads        UserMediaUpload[]
+  context        MediaContext      @default(DEFAULT)
+  comments       Comment[]
+
+  avatarUsers User[] @relation("UserAvatar")
+  coverUsers  User[] @relation("UserCover")
+
+  @@index([original_hash])
+  @@index([processed_hash])
+}
+
+model UserMediaUpload {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  mediaId    Int
+  uploadedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: NoAction)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: NoAction)
+
+  @@unique([userId, mediaId])
+  @@index([mediaId])
+  @@index([userId])
+}
+
+model Comment {
+  id       Int  @id @default(autoincrement())
+  postId   Int
+  userId   Int
+  parentId Int?
+
+  json    Json?
+  mediaId Int?
+  path    String?
+
+  isDeleted  Boolean @default(false)
+  replyCount Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post  Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user  User   @relation(fields: [userId], references: [id])
+  media Media? @relation(fields: [mediaId], references: [id])
+
+  reactedUsers      ReactionComment[]
+  bookmarkedByUsers BookmarkComment[]
+
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([postId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model AvatarColor {
+  id    Int    @id @default(autoincrement())
+  value String @db.VarChar(7)
+  users User[]
+
+  @@unique([value])
+}
+
+model MuteUser {
+  id           Int      @id @default(autoincrement())
+  ownerId      Int
+  targetUserId Int
+  reason       String?
+  createdAt    DateTime @default(now())
+
+  muter      User @relation("MuteUser_muter", fields: [ownerId], references: [id], onDelete: Cascade)
+  targetUser User @relation("MuteUser_target", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetUserId])
+  @@index([ownerId])
+  @@index([targetUserId])
+}
+
+model MutePost {
+  id           Int      @id @default(autoincrement())
+  ownerId      Int
+  targetPostId Int
+  reason       String?
+  createdAt    DateTime @default(now())
+
+  muter      User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  targetUser Post @relation(fields: [targetPostId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetPostId])
+  @@index([ownerId])
+  @@index([targetPostId])
+}
+
+model FollowUser {
+  id           Int      @id @default(autoincrement())
+  subscriberId Int
+  targetUserId Int
+  createdAt    DateTime @default(now())
+
+  subscriber User @relation("FollowUser_subscriber", fields: [subscriberId], references: [id], onDelete: Cascade)
+  targetUser User @relation("FollowUser_target", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, targetUserId])
+  @@index([subscriberId])
+  @@index([targetUserId])
+}
+
+model ReactionValue {
+  id    Int    @id @default(autoincrement())
+  name  String
+  emoji String
+
+  posts    ReactionPost[]
+  comments ReactionComment[]
+
+  @@unique([name])
+  @@unique([emoji])
+}
+
+model ReactionPost {
+  id              Int      @id @default(autoincrement())
+  ownerId         Int
+  targetPostId    Int
+  reactionValueId Int
+  createdAt       DateTime @default(now())
+
+  user          User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  post          Post          @relation(fields: [targetPostId], references: [id], onDelete: Cascade)
+  reactionValue ReactionValue @relation(fields: [reactionValueId], references: [id])
+
+  @@unique([ownerId, targetPostId])
+  @@index([ownerId])
+  @@index([targetPostId])
+}
+
+model ReactionComment {
+  id              Int      @id @default(autoincrement())
+  ownerId         Int
+  targetCommentId Int
+  reactionValueId Int
+  createdAt       DateTime @default(now())
+
+  user          User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  comment       Comment       @relation(fields: [targetCommentId], references: [id], onDelete: Cascade)
+  reactionValue ReactionValue @relation(fields: [reactionValueId], references: [id])
+
+  @@unique([ownerId, targetCommentId])
+  @@index([ownerId])
+  @@index([targetCommentId])
+}
+
+model BookmarkPost {
+  id           Int      @id @default(autoincrement())
+  ownerId      Int
+  targetPostId Int
+  createdAt    DateTime @default(now())
+
+  owner      User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  targetPost Post @relation(fields: [targetPostId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetPostId])
+  @@index([ownerId])
+  @@index([targetPostId])
+}
+
+model BookmarkComment {
+  id              Int      @id @default(autoincrement())
+  ownerId         Int
+  targetCommentId Int
+  createdAt       DateTime @default(now())
+
+  owner         User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  targetComment Comment @relation(fields: [targetCommentId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetCommentId])
+  @@index([ownerId])
+  @@index([targetCommentId])
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum PostStatus {
+  PUBLISHED
+  DRAFT
+  DELETED
+}
+
+enum FileType {
+  image
+  video
+}
+
+enum FileFormat {
+  mp4
+  webp
+  gif
+  jpeg
+}
+
+enum MediaContext {
+  DEFAULT
+  AVATAR
+  COVER
+}

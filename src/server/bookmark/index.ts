@@ -1,0 +1,5 @@
+export { BookmarkService } from './service'
+export { BookmarkController } from './controller'
+export { BookmarkPostRepository } from './repositories/bookmark-post.repository'
+export { BookmarkCommentRepository } from './repositories/bookmark-comment.repository'
+export type { IBookmarkService, IBookmarkRepositories, IBookmarkRepository } from './types'

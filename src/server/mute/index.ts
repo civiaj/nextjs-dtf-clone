@@ -1,0 +1,5 @@
+export { MuteController } from './controller'
+export { MuteService } from './service'
+export { MutePostRepository } from './repositories/mute-post.repository'
+export { MuteUserRepository } from './repositories/mute-user.repository'
+export type { IMuteService, IMuteRepositories, IMuteRepository } from './types'

@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true,
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ],
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        "src/server/db/db.config.js",
+        "database/migrations/20241016135055-create-users-table.js",
+        "database/config.js",
+        "src/server/ffmpeg.ts",
+        "src/shared/ui/MediaPreview/model/video-plugin.js",
+        "prisma/scripts/seedColors.ts",
+        "src/shared/ui/MediaPreview/model/video-plugin.js",
+        "src/page/user-[id]/ui/Г"
+    ],
+    "exclude": ["node_modules"],
+    "noErrorTruncation": true
+}

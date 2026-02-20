@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+    :root {
+        --background: 240 4.8% 95.9%;
+        --background-active: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --secondary-hover: 240 5.9% 90%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 96%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 0 0% 96%;
+        --accent-foreground: 240 5.9% 10%;
+        --active: 216 100% 58%;
+        --active-foreground: 0 0% 98%;
+        --destructive: 358, 100%, 38%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --color-branch: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 339 89% 29%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --scrollbar: 240 3.8% 46.1%;
+        --radius: 0.5rem;
+        --navbar-height: 3.5rem;
+        --root-layout-my: 1rem;
+        --mobile-sidebar-height: 2.5rem;
+    }
+
+    @media screen and (max-width: 640px) {
+        :root {
+            --navbar-height: 2.5rem;
+            --root-layout-my: 0;
+        }
+    }
+
+    .dark {
+        --background: 240 3.7% 15.9%;
+        --background-100: 240 6% 10%;
+        --background-active: 0 0% 100%;
+        --foreground: 220 14% 90%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 220 14% 90%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 220 14% 90%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 10% 3.9%;
+        --secondary-foreground: 220 12% 88%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 220 9% 72%;
+        --accent: 216, 100%, 58%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --color-branch: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 352 100% 90%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --scrollbar: 240 3.7% 15.9%;
+        --navbar-height: 3.5rem;
+        --mobile-sidebar-height: 2.5rem;
+    }
+}
+
+:root {
+    --quote-line-width: 4px;
+}
+
+#root {
+    @apply relative mx-auto grid h-full min-h-[calc(100dvh-var(--navbar-height))] w-full max-w-screen-xl grid-cols-1 lg:grid-cols-[min-content,1fr];
+}
+
+.sidebar-desktop {
+    @apply pointer-events-none absolute top-[calc(var(--navbar-height))] z-20 hidden h-[calc(100dvh-var(--navbar-height))] grid-cols-[0px] py-[var(--root-layout-my)] transition-[grid-template-columns] duration-300 lg:pointer-events-auto lg:sticky lg:grid;
+}
+
+.sidebar-mobile {
+    @apply fixed bottom-0 left-0 right-0 z-10 h-[var(--mobile-sidebar-height)] w-full shrink-0 border-t bg-card md:border-t-0 lg:pointer-events-none lg:absolute lg:hidden;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+video {
+}
+
+img,
+video {
+    will-change: transform;
+    transform: translateZ(0);
+    overflow-x: hidden;
+    max-width: 100%;
+    vertical-align: middle;
+    font-style: italic;
+    shape-margin: 0.75rem;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.highlighter pre {
+    padding: 0 !important;
+    background: var(--secondary) !important;
+    color: var(--foreground) !important;
+}
+
+#modal {
+    z-index: 51;
+    position: relative;
+}
+
+.overlay {
+    @apply fixed inset-0 z-[1] bg-neutral-800/80 backdrop-blur-sm dark:bg-neutral-950/90;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+.no-radius-first-container > .vlist > div > div:first-child > div:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.no-radius-first-skeleton > div:nth-of-type(2) {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.active-glow {
+    @apply overflow-hidden rounded-xl border border-border bg-secondary shadow-[0_0px_5px_0px_transparent] shadow-transparent outline-none transition-colors focus-within:border-active focus-within:bg-card focus-within:shadow-active/30 hover:border-active/30 hover:bg-card hover:shadow-active/20 hover:focus-within:border-active hover:focus-within:shadow-active/30;
+}
+
+body.grabbing {
+    cursor: grabbing !important;
+
+    *:not(.allow-interaction) {
+        pointer-events: none !important;
+        user-select: none !important;
+    }
+}
+
+.scroll-margin-navbar {
+    scroll-margin-top: calc(var(--navbar-height, 4rem) + 1rem);
+}
+
+::selection {
+    @apply !bg-active/20;
+}
+
+/* EDITOR-JS */
+
+.ce-separator {
+    @apply before:block before:text-center before:text-3xl before:tracking-wider before:content-["***"] md:before:text-4xl;
+}
+
+.quote-wrapper {
+    @apply relative grid grid-cols-[var(--quote-line-width),minmax(0,1fr)] gap-x-3 gap-y-1;
+}
+
+.quote-wrapper::before {
+    content: '';
+    width: var(--quote-line-width);
+    align-self: stretch;
+    @apply col-start-1 col-end-2 row-start-1 row-end-3 rounded-xl bg-active;
+}
+
+.quote-text {
+    @apply col-start-2 col-end-3 row-start-1 row-end-2 outline-none;
+}
+
+.quote-caption {
+    @apply col-start-2 col-end-3 row-start-2 row-end-3 outline-none;
+}
+
+/* tiptap */
+
+.tiptap {
+    @apply p-3 outline-none;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) blockquote {
+    @apply relative my-1 grid grid-cols-[var(--quote-line-width),minmax(0,1fr)] gap-y-1;
+    min-height: 100%;
+    position: relative;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) blockquote::before {
+    content: '';
+    width: var(--quote-line-width);
+    align-self: stretch;
+    @apply absolute bottom-0 left-0 top-0 rounded-xl bg-active;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) blockquote p {
+    @apply col-start-2 col-end-3 ml-[calc(var(--quote-line-width)+.5rem)] outline-none;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none float-left h-0 text-muted-foreground;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) a:not([data-type='mention']) {
+    @apply text-active underline;
+}
+
+:where(.tiptap-editor, .tiptap-renderer) a[data-type='mention'] {
+    @apply rounded-md bg-yellow-200 font-medium text-inherit;
+}
