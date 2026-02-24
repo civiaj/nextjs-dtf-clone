@@ -1,7 +1,7 @@
 import type { API, BlockAPI } from '@editorjs/editorjs'
 import ReactDOM, { Root } from 'react-dom/client'
 import { MediaToolData } from '@/entities/editor'
-import { imageSchema, videoSchema } from '@/shared/validation/media/media.validation'
+import { imageSchema, videoSchema } from '@/shared/validation/media.validation'
 import { EditorBlockArgs, EditorBlockTool } from '@/widgets/post-editor/model/types'
 import { EditorBlockMedia } from './components'
 

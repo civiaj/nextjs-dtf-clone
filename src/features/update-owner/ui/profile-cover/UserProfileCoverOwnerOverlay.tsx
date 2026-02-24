@@ -21,8 +21,8 @@ import { FileInput } from '@/shared/ui/FileInput'
 import { LoadingDots } from '@/shared/ui/loading-indicator'
 import { cn } from '@/shared/utils/common.utils'
 import { UserProfileCoverImage } from './UserProfileCoverImage'
-import { useCoverDrag } from '../model/hooks/useCoverDrag'
-import { useUpdateOwnerCover } from '../model/hooks/useUpdateOwnerCover'
+import { useCoverDrag } from '../../model/hooks/useCoverDrag'
+import { useUpdateOwner } from '../../model/hooks/useUpdateOwner'
 
 export const UserProfileCoverOwnerOverlay = ({
     cover: initialCover,
@@ -37,8 +37,8 @@ export const UserProfileCoverOwnerOverlay = ({
     const prevCoverY = useRef<NonNullable<TUser['coverY']>>(initialCoverY ?? 0)
     const prevCover = useRef<TUser['cover']>(initialCover)
 
-    const { upload, isLoading: isUploading } = useMediaUpload()
-    const { updateCover, isLoading } = useUpdateOwnerCover()
+    const [upload, { isLoading: isUploading }] = useMediaUpload()
+    const { updateProfileCover, isLoading } = useUpdateOwner()
 
     const openFileInput = () => fileInputRef.current?.click()
 
@@ -46,7 +46,7 @@ export const UserProfileCoverOwnerOverlay = ({
         const file = e.target.files?.[0]
         if (!file) return
         e.currentTarget.value = ''
-        upload({ file }).then((result) => {
+        upload({ file, options: { context: 'COVER' } }).then((result) => {
             if (result) {
                 flushSync(() => {
                     setCover(result)
@@ -91,14 +91,14 @@ export const UserProfileCoverOwnerOverlay = ({
     }
 
     const handleUpdateCover = () => {
-        updateCover(cover?.id ?? null, coverY)
+        updateProfileCover({ coverId: cover?.id, coverY })
         setOverlay('editable')
         prevCoverY.current = coverY
         prevCover.current = cover
     }
 
     const handleRemoveCover = () => {
-        updateCover(null, null)
+        updateProfileCover({ coverId: null, coverY: null })
         setCover(null)
         setCoverY(0)
         setOverlay('empty')

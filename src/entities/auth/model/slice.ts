@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { TUser } from '@/shared/types/user.types'
 import { authService } from './service'
 
@@ -17,13 +17,16 @@ const initialState: TAuthSlice = {
 const authSlice = createSlice({
     initialState,
     name: 'auth',
-    reducers: {},
+    reducers: {
+        setUser(state, action: PayloadAction<TUser | null>) {
+            state.staleUser = action.payload
+            state.currentUser = action.payload
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addMatcher(
-                (action) =>
-                    authService.endpoints.getOwner.matchFulfilled(action) ||
-                    authService.endpoints.updateOwner.matchFulfilled(action),
+                (action) => authService.endpoints.getOwner.matchFulfilled(action),
                 (state, { payload }) => {
                     state.isRefreshAttempted = true
                     state.staleUser = payload.result

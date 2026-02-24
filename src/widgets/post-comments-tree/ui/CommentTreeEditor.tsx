@@ -2,11 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import { useSaveComment } from '@/entities/comment'
-import {
-    MediaAttachmentItem,
-    MediaAttachmentUpload,
-    MediaAttachmentUploadRef
-} from '@/entities/media'
+import { MediaUploadField, MediaUploadFieldRef } from '@/entities/media'
 import { commentEditorExtensions } from '@/features/comment-editor'
 import { MediaAppIcon } from '@/shared/icons'
 import {
@@ -16,9 +12,11 @@ import {
     TiptapHint
 } from '@/shared/services/tiptap'
 import { TComment } from '@/shared/types/comment.types'
-import { TMedia } from '@/shared/types/media.types'
+import { TMediaWithCaption } from '@/shared/types/media.types'
 import { TPost } from '@/shared/types/post.types'
 import { Button } from '@/shared/ui/button'
+
+const maxFiles = 1
 
 export const CommentTreeEditor = ({
     onCancel,
@@ -31,10 +29,10 @@ export const CommentTreeEditor = ({
     postId: TPost['id']
     parentId?: TComment['parentId']
 }) => {
-    const uploadRef = useRef<MediaAttachmentUploadRef>(null)
+    const uploadRef = useRef<MediaUploadFieldRef>(null)
     const editorRef = useRef<TiptapEditorCoreRef>(null)
     const [editorHasContent, setEditorHasContent] = useState(false)
-    const [uploadedAttachments, setUploadedAttachments] = useState<TMedia[]>([])
+    const [uploadedAttachments, setUploadedAttachments] = useState<TMediaWithCaption[]>([])
     const { isLoading, execute: saveComment } = useSaveComment()
 
     const handleOnHasContentChange = useCallback((value: boolean) => {
@@ -52,7 +50,7 @@ export const CommentTreeEditor = ({
         if (!doc) return
 
         editorRef.current?.disable()
-        const mediaId = uploadedAttachments[0]?.id
+        const mediaId = uploadedAttachments[0]?.media.id
 
         saveComment(
             { parentId, postId, mediaId, json: JSON.stringify(doc) },
@@ -69,19 +67,6 @@ export const CommentTreeEditor = ({
         )
     }, [saveComment, parentId, postId, uploadedAttachments, onSuccess])
 
-    const handleRemoveFile = useCallback(
-        (id: number) => setUploadedAttachments((prev) => prev.filter((item) => item.id !== id)),
-        []
-    )
-
-    const handleFileUploadEnd = useCallback(
-        (media: TMedia) =>
-            setUploadedAttachments((prev) =>
-                prev.some((item) => item.id === media.id) ? prev : [...prev, media]
-            ),
-        []
-    )
-
     const canSaveComment = uploadedAttachments.length > 0 || editorHasContent
 
     return (
@@ -96,39 +81,25 @@ export const CommentTreeEditor = ({
                 />
             }
             attachments={
-                <MediaAttachmentUpload
-                    max={1}
-                    onRemove={handleRemoveFile}
-                    onUploadEnd={handleFileUploadEnd}
+                <MediaUploadField
                     ref={uploadRef}
-                    uploadedSize={uploadedAttachments.length}>
-                    <MediaAttachmentUpload.Uploaded>
-                        {uploadedAttachments.map((media) => (
-                            <MediaAttachmentItem
-                                previewAvailable
-                                key={media.id}
-                                id={media.id}
-                                type={media.type}
-                                src={media.src}
-                                height={media.height}
-                                width={media.width}
-                                blurDataURL={media.blurDataURL}
-                                thumbnail={media.thumbnail}
-                                duration={media.duration}
-                            />
-                        ))}
-                    </MediaAttachmentUpload.Uploaded>
-                </MediaAttachmentUpload>
+                    values={uploadedAttachments}
+                    onChange={setUploadedAttachments}
+                    maxFiles={maxFiles}
+                    showPicker={false}
+                    allowDragAndDrop={false}
+                />
             }
             leftControls={
                 <>
                     <Button
-                        onClick={() => uploadRef.current?.openFileInput()}
+                        disabled={uploadedAttachments.length === maxFiles}
+                        onClick={() => uploadRef.current?.openFileDialog()}
                         title='Прикрепить файл к комментарию'
                         aria-label='Прикрепить файл к комментарию'
                         size='icon-base'
                         variant='ghost'>
-                        <MediaAppIcon size={18} />
+                        <MediaAppIcon />
                     </Button>
                     <TiptapHint />
                 </>

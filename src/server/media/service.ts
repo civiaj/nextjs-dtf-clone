@@ -1,90 +1,69 @@
-import { fileTypeFromBuffer } from 'file-type'
-import { ApiError } from '@/lib/error'
-import { IMediaFileRepository, IMediaRepository, IMediaService } from '@/server/media/types'
-import { ERROR_MESSAGES, SUPPORTED_FILE_EXTENTIONS } from '@/shared/constants'
 import { Media, User } from '@/shared/services/prisma'
-import { MediaUploadSchemaInput } from '@/shared/validation/media/mediaSchema'
+import { TMediaSelect } from '@/shared/types/media.types'
+import { UploadMediaDTO } from '@/shared/validation/media.validation'
+import { ImageProcessor } from './processors/image.processor'
+import { VideoProcessor } from './processors/video.processor'
+import { IMediaRepository } from './types'
 import { createMediaHashFromBuffer } from './utils/createMediaHash'
+import { detectAndValidateFile } from './utils/detectAndValidateFile'
+import { resolveMediaContext } from './utils/resolveMediaContext'
 
-export class MediaService implements IMediaService {
+export class MediaService {
     constructor(
-        private mediaFileRepository: IMediaFileRepository,
-        private mediaRepository: IMediaRepository
+        private mediaRepository: IMediaRepository,
+        private imageProcessor: ImageProcessor,
+        private videoProcessor: VideoProcessor
     ) {}
-    async upload(
-        userId: User['id'],
-        file: MediaUploadSchemaInput['file'],
-        options?: MediaUploadSchemaInput['options']
-    ) {
-        const buffer = Buffer.from(await file.arrayBuffer())
-        const original_hash = createMediaHashFromBuffer(buffer)
-        const fileType = await fileTypeFromBuffer(buffer)
 
-        if (!fileType) throw ApiError.BadRequest(ERROR_MESSAGES.MEDIA.WRONG_FORMAT('unknown'))
+    async upload({ file, options }: UploadMediaDTO, userId: User['id']) {
+        const context = resolveMediaContext(options)
+        const detected = await detectAndValidateFile(file)
+        const originalHash = createMediaHashFromBuffer(detected.buffer)
 
-        const { ext } = fileType
-        let context: Media['context'] = 'DEFAULT'
-        const isAvatar = options?.isAvatar === true
-        const isCover = options?.isCover === true
+        const existing = await this.mediaRepository.findByHash(originalHash, context)
 
-        if (isAvatar) context = 'AVATAR'
-        else if (isCover) context = 'COVER'
-
-        let media = await this.mediaRepository.findByHash(original_hash, context)
-        let status = 200
-
-        if (!media) {
-            let data: Omit<Media, 'id' | 'original_hash' | 'context'> | null = null
-
-            data = await this.resolveMediaProcessing(ext, buffer, options)
-            if (!data) throw ApiError.BadRequest(ERROR_MESSAGES.MEDIA.WRONG_FORMAT(ext))
-
-            media = await this.mediaRepository.create({ ...data, original_hash, context }, userId)
-            status = 201
+        if (existing) {
+            await this.mediaRepository.linkMediaToUser(existing.id, userId)
+            return { result: existing, status: 200 }
         }
 
-        await this.mediaRepository.linkMediaToUser(media.id, userId)
-        return { result: media, status }
-    }
+        const processedMedia =
+            detected.kind === 'image'
+                ? await this.imageProcessor.process(detected.buffer)
+                : await this.videoProcessor.process(
+                      detected.buffer,
+                      detected.detectedExtension,
+                      options
+                  )
 
-    private async resolveMediaProcessing(
-        ext: string | (typeof SUPPORTED_FILE_EXTENTIONS)[number],
-        buffer: Buffer,
-        options?: MediaUploadSchemaInput['options']
-    ) {
-        const isVideo = ['gif', 'mp4', 'mkv', 'mov', 'avi', 'webm'].includes(ext)
-
-        if (isVideo && options) {
-            return await this.mediaFileRepository.saveAnimatedWebp(buffer)
+        const cleanupProcessedMediaSafely = async () => {
+            try {
+                await processedMedia.cleanup()
+            } catch (cleanupError) {
+                console.warn('media artifact cleanup failed', cleanupError)
+            }
         }
 
-        switch (ext) {
-            case 'jpg':
-            case 'webp':
-            case 'jpeg':
-            case 'png':
-            case 'heic':
-            case 'heif':
-            case 'tiff':
-            case 'bmp':
-                return await this.mediaFileRepository.saveImage(buffer, 'webp')
+        try {
+            const upserted = await this.mediaRepository.createOrGetByOriginalHash({
+                userId,
+                originalHash,
+                context,
+                media: processedMedia.media
+            })
 
-            case 'gif':
-                return await this.mediaFileRepository.saveVideo(buffer, 'gif')
+            if (!upserted.created) {
+                await cleanupProcessedMediaSafely()
+            }
 
-            case 'mp4':
-            case 'mkv':
-            case 'mov':
-            case 'avi':
-            case 'webm':
-                return await this.mediaFileRepository.saveVideo(buffer, 'mp4')
-
-            default:
-                return null
+            return { result: upserted.media, status: upserted.status }
+        } catch (error) {
+            await cleanupProcessedMediaSafely()
+            throw error
         }
     }
 
-    async findById(id: Media['id']) {
-        return this.mediaRepository.findById(id)
+    async findById(id: Media['id']): Promise<TMediaSelect | null> {
+        return await this.mediaRepository.findById(id)
     }
 }

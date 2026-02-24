@@ -1,11 +1,7 @@
 import { api } from '@/shared/api'
 import { TResponseBase } from '@/shared/types'
 import { TUser } from '@/shared/types/user.types'
-import {
-    LoginSchemaInput,
-    PatchUserSchemaInput,
-    SignUpSchemaInput
-} from '@/shared/validation/user.schema'
+import { LoginSchemaInput, SignUpSchemaInput } from '@/shared/validation/user.schema'
 
 export const authService = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -47,14 +43,6 @@ export const authService = api.injectEndpoints({
                 method: 'GET',
                 credentials: 'include'
             })
-        }),
-        updateOwner: builder.mutation<TResponseBase<TUser>, PatchUserSchemaInput>({
-            query: (body) => ({
-                url: '/users',
-                body,
-                method: 'POST',
-                credentials: 'include'
-            })
         })
     }),
     overrideExisting: true
@@ -65,7 +53,6 @@ export const {
     useLazyGetOwnerQuery,
     useLoginMutation,
     useSignupMutation,
-    useUpdateOwnerMutation,
     useRefreshQuery,
     useLogoutMutation
 } = authService

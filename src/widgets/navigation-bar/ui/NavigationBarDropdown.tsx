@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { ChangeThemeDropdownItem } from '@/entities/ui'
 import { LogoutDropdownItem } from '@/features/auth-logout'
 import { useAppSelector } from '@/lib/store'
@@ -18,7 +18,6 @@ import { UserAvatar } from '@/shared/ui/user-avatar'
 
 export const NavigationBarDropdown = () => {
     const staleUser = useAppSelector((state) => state.auth.staleUser)
-    const router = useRouter()
 
     if (!staleUser) return null
 
@@ -38,28 +37,32 @@ export const NavigationBarDropdown = () => {
             <DropdownMenuContent
                 align='end'
                 className='min-w-52 max-w-64 md:min-w-60 md:max-w-72'>
-                <DropdownMenuItem onSelect={() => router.push(`${PATH.USER}/${staleUser.id}`)}>
-                    <UserAvatar>
-                        <UserAvatar.Avatar
-                            avatar={staleUser.avatar}
-                            name={staleUser.name}
-                            avatarColor={staleUser.avatarColor}
-                        />
-                        <UserAvatar.Details>
-                            <UserAvatar.Name name={staleUser.name} />
-                            <UserAvatar.Extra description={'@id' + staleUser.id} />
-                        </UserAvatar.Details>
-                    </UserAvatar>
+                <DropdownMenuItem asChild>
+                    <Link href={`${PATH.USER}/${staleUser.id}`}>
+                        <UserAvatar>
+                            <UserAvatar.Avatar
+                                avatar={staleUser.avatar}
+                                name={staleUser.name}
+                                avatarColor={staleUser.avatarColor}
+                            />
+                            <UserAvatar.Details>
+                                <UserAvatar.Name name={staleUser.name} />
+                                <UserAvatar.Extra description={'@id' + staleUser.id} />
+                            </UserAvatar.Details>
+                        </UserAvatar>
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => router.push(PATH.DRAFT)}>
-                    <SquarePenAppIcon />
-                    <Text as='p'>Черновики</Text>
+                <DropdownMenuItem asChild>
+                    <Link href={PATH.DRAFT}>
+                        <SquarePenAppIcon />
+                        <Text as='p'>Черновики</Text>
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    // variant='active'
-                    onSelect={() => router.push(PATH.SETTINGS)}>
-                    <SettingsAppIcon />
-                    <Text as='p'>Настройки</Text>
+                <DropdownMenuItem asChild>
+                    <Link href={PATH.SETTINGS}>
+                        <SettingsAppIcon />
+                        <Text as='p'>Настройки</Text>
+                    </Link>
                 </DropdownMenuItem>
                 <ChangeThemeDropdownItem />
                 <DropdownMenuSeparator />

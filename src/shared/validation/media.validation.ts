@@ -1,4 +1,4 @@
-import { FileType } from '@prisma/client'
+import { FileType, MediaContext } from '@prisma/client'
 import { z } from 'zod'
 
 export const imageSchema = z.object({
@@ -30,3 +30,18 @@ export const videoSchema = z.object({
     thumbnail: z.string(),
     type: z.literal(FileType.video)
 })
+
+export const uploadMediaSchema = z.object({
+    file: z.instanceof(File),
+    options: z.string().nullable().optional()
+})
+
+export const uploadMediaOptionsSchema = z.object({
+    context: z.nativeEnum(MediaContext).optional()
+})
+
+export type UploadMediaOptionsInput = z.infer<typeof uploadMediaOptionsSchema>
+export type UploadMediaInput = Omit<z.infer<typeof uploadMediaSchema>, 'options'> & {
+    options?: UploadMediaOptionsInput
+}
+export type UploadMediaDTO = UploadMediaInput

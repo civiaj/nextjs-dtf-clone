@@ -1,5 +1,3 @@
-import { TMedia, TMediaFormatImage, TMediaFormatVideo } from '@/shared/types/media.types'
-
 export const PATH = {
     MAIN: '',
     MAIN_POPULAR: '/popular',
@@ -7,7 +5,6 @@ export const PATH = {
     MAIN_SELF: '/my',
     POST: '/post',
     USER: '/user',
-
     SETTINGS: '/settings',
     SETTINGS_BLOG: '/settings/blog',
     SETTINGS_FEED: '/settings/feed',
@@ -18,31 +15,11 @@ export const PATH = {
     BOOKMARKS_REACTIONS: '/reactions'
 } as const
 
-// <<< MEDIA >>>
 export const MAX_FILE_SIZE = 20 * 1024 * 1024
 export const MIN_FILE_HEIGHT_PX = 25
 export const MIN_FILE_WIDTH_PX = 25
-export const SUPPORTED_FILE_EXTENTIONS = [
-    'jpeg',
-    'png',
-    'webp',
-    'heic',
-    'heif',
-    'tiff',
-    'bmp',
-    'gif',
-    'mp4',
-    'mkv',
-    'mov',
-    'avi',
-    'webm'
-] as const
 export const MAX_VIDEO_DURATION = 6000
 export const MAX_AVATAR_DURATION = 2
-export const MEDIA_FORMATS_IMAGE: TMediaFormatImage[] = ['webp', 'jpeg']
-export const MEDIA_FORMATS_VIDEO: TMediaFormatVideo[] = ['gif', 'mp4']
-export const MEDIA_TYPES: TMedia['type'][] = ['image', 'video']
-// <<< MEDIA >>>
 
 export const ERROR_MESSAGES = {
     MEDIA: {

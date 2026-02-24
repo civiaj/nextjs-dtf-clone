@@ -1,8 +1,5 @@
-export { MediaAttachmentItem } from './ui/MediaAttachmentItem'
+export { MediaUploadField, type MediaUploadFieldRef } from './ui/MediaUploadField'
+export { useMediaUploadQueue } from './model/hooks/useMediaUploadQueue'
 export { useMediaUpload } from './model/hooks/useMediaUpload'
+export { uploadMediaWithApi } from './model/uploadMediaApi'
 export { updateSrcIfVideo } from './model/utils'
-export { MediaAttachmentUpload } from './ui/MediaAttachmentUpload/MediaAttachmentUpload'
-export type {
-    MediaAttachmentUploadRef,
-    MediaAttachmentChangeData
-} from './ui/MediaAttachmentUpload/MediaAttachmentUpload'

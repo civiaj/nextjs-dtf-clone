@@ -5,9 +5,6 @@ import {
 } from '@/server/bookmark'
 import { CommentEnricher, CommentRepository, CommentService } from '@/server/comment'
 import { FollowUserRepository, FollowUserService } from '@/server/follow-user'
-import { MediaService } from '@/server/media'
-import { MediaFileRepository } from '@/server/media/repositories/media-file.repository'
-import { MediaRepository } from '@/server/media/repositories/media.repository'
 import { MutePostRepository, MuteService, MuteUserRepository } from '@/server/mute'
 import { PostEnricher, PostRepository } from '@/server/post'
 import { PostService } from '@/server/post/service'
@@ -26,8 +23,6 @@ const bookmarkCommentRepository = new BookmarkCommentRepository()
 const bookmarkPostRepository = new BookmarkPostRepository()
 const commentRepository = new CommentRepository()
 const followUserRepository = new FollowUserRepository()
-const mediaFileRepository = new MediaFileRepository()
-const mediaRepository = new MediaRepository()
 const mutePostRepository = new MutePostRepository()
 const muteUserRepository = new MuteUserRepository()
 const postRepository = new PostRepository()
@@ -70,7 +65,6 @@ const postEnricher = new PostEnricher(
     reactionService,
     bookmarkService
 )
-const mediaService = new MediaService(mediaFileRepository, mediaRepository)
 const postService = new PostService(
     postRepository,
     bookmarkService,
@@ -88,7 +82,7 @@ export {
     postService,
     commentService,
     tokenService,
-    mediaService,
     bookmarkService,
     muteService
 }
+export { mediaService } from '@/server/media'

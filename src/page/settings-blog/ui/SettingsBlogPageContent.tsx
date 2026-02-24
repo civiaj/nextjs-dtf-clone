@@ -1,6 +1,7 @@
 ﻿import { useId } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useUpdateOwner } from '@/features/update-owner'
 import { useAppSelector } from '@/lib/store'
 import { PATH } from '@/shared/constants'
 import { Button } from '@/shared/ui/button'
@@ -8,7 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/shared/ui
 import { Input, TextArea } from '@/shared/ui/input'
 import { SettingsField, SettingsLayout, SettingsSection } from '@/shared/ui/settings'
 import { patchUserSchema } from '@/shared/validation/user.schema'
-import { useUpdateOwnerBlog } from '../hooks/useUpdateOwnerBlog'
 
 const settingsBlogSchema = patchUserSchema.pick({
     description: true,
@@ -58,10 +58,10 @@ const SettingsBlogPageContentForm = ({
         values.name?.trim() !== initialForm.name.trim() ||
         values.description?.trim() !== initialForm.description.trim()
 
-    const { isLoading, execute } = useUpdateOwnerBlog()
+    const { updateBlog, isLoading } = useUpdateOwner()
 
     const handleUpdate = form.handleSubmit((values) => {
-        execute(values, {
+        updateBlog(values, {
             onSuccess: ({ description, name }) => {
                 const nextForm = { description: description ?? '', name: name ?? '' }
                 form.reset(nextForm)
