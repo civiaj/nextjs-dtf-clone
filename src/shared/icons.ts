@@ -55,7 +55,9 @@ export {
     Italic as ItalicAppIcon,
     Info as InfoAppIcon,
     Menu as MenuAppIcon,
-    CircleAlert as CircleAlertAppIcon
+    CircleAlert as CircleAlertAppIcon,
+    Sun as SunAppIcon,
+    Moon as MoonAppIcon
 } from 'lucide-react'
 
 export { IconBrandTelegram as TelegramAppIcon } from '@tabler/icons-react'

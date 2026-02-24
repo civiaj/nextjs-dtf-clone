@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { LogoutButton } from '@/features/auth-logout'
+import { ChangeThemeDropdownItem } from '@/entities/ui'
+import { LogoutDropdownItem } from '@/features/auth-logout'
 import { useAppSelector } from '@/lib/store'
 import { PATH } from '@/shared/constants'
 import { ChevronDownAppIcon, SettingsAppIcon, SquarePenAppIcon } from '@/shared/icons'
@@ -9,6 +10,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/shared/ui/dropdown-menu'
 import { Text } from '@/shared/ui/text'
@@ -50,15 +52,18 @@ export const NavigationBarDropdown = () => {
                     </UserAvatar>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => router.push(PATH.DRAFT)}>
-                    <SquarePenAppIcon size={20} />
+                    <SquarePenAppIcon />
                     <Text as='p'>Черновики</Text>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => router.push(PATH.SETTINGS)}>
-                    <SettingsAppIcon size={20} />
+                <DropdownMenuItem
+                    // variant='active'
+                    onSelect={() => router.push(PATH.SETTINGS)}>
+                    <SettingsAppIcon />
                     <Text as='p'>Настройки</Text>
                 </DropdownMenuItem>
-                <div className='border border-border' />
-                <LogoutButton />
+                <ChangeThemeDropdownItem />
+                <DropdownMenuSeparator />
+                <LogoutDropdownItem />
             </DropdownMenuContent>
         </DropdownMenu>
     )

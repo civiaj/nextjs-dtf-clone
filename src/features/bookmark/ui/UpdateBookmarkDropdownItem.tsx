@@ -14,10 +14,9 @@ export const UpdateBookmarkDropdownItem = ({
     return (
         <DropdownMenuItem
             onClick={handleBookmarkUpdate}
-            className='flex gap-3'
-            isActive={isActive}
+            variant={isActive ? 'active' : 'default'}
             disabled={isLoading}>
-            <BookmarkAppIcon size={20} />
+            <BookmarkAppIcon />
             {isActive ? 'Удалить из закладок' : 'Добавить в закладки'}
         </DropdownMenuItem>
     )

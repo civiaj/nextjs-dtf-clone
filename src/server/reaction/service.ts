@@ -1,5 +1,5 @@
 import { TPageResult } from '@/shared/types/common.types'
-import { TReactionConfig, TReactionMetrics, TReactionTarget } from '@/shared/types/reaction.types'
+import { TReactionConfig, TReactionMetrics, ReactionTarget } from '@/shared/types/reaction.types'
 import {
     IReactionRepositories,
     IReactionService,
@@ -14,7 +14,7 @@ export class ReactionService implements IReactionService {
         private repositories: IReactionRepositories,
         private valueRepository: IReactionValueRepository
     ) {}
-    async update<T extends TReactionTarget>({
+    async update<T extends ReactionTarget>({
         target,
         ...payload
     }: TUpdateReactionPayload & { target: T }): Promise<TReactionMetrics> {
@@ -26,14 +26,14 @@ export class ReactionService implements IReactionService {
         return metrics.get(payload.targetId)!
     }
 
-    async getAll<T extends TReactionTarget>({
+    async getAll<T extends ReactionTarget>({
         target,
         ...payload
     }: TGetAllReactionPayload & { target: T }): Promise<TPageResult<TReactionConfig[T]['select']>> {
         return await this.repositories[target].getAll(payload)
     }
 
-    async getMetrics<T extends TReactionTarget>({
+    async getMetrics<T extends ReactionTarget>({
         target,
         ...payload
     }: TGetReactionMetricsPayload & { target: T }): Promise<TReactionConfig[T]['metrics']> {

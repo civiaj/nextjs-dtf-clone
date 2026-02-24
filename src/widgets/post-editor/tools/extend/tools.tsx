@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+﻿import { useCallback, useMemo, useState } from 'react'
 import { API, BlockAPI } from '@editorjs/editorjs'
 import { LucideIcon } from 'lucide-react'
 import ReactDOM, { Root } from 'react-dom/client'
@@ -26,7 +26,8 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
+    DropdownMenuSeparator
 } from '@/shared/ui/dropdown-menu'
 import { Input } from '@/shared/ui/input'
 import { ScrollArea } from '@/shared/ui/scroll-area'
@@ -369,21 +370,22 @@ const CreateMenu = ({
                         {renderOptions.length > 0 &&
                             renderOptions.map((option, index) => {
                                 return 'isSeparator' in option ? (
-                                    <div
-                                        key={index}
-                                        className='w-full border-b border-border'
-                                    />
+                                    <DropdownMenuSeparator key={index} />
                                 ) : (
                                     <DropdownMenuItem
-                                        className='flex items-center gap-2'
-                                        isActive={option.isActive}
-                                        isDanger={option.isDanger}
+                                        variant={
+                                            option.isActive
+                                                ? 'active'
+                                                : option.isDanger
+                                                  ? 'destructive'
+                                                  : 'default'
+                                        }
                                         key={option.label}
                                         onSelect={(e) => {
                                             e.preventDefault()
-                                        }}
-                                        onClick={() => handleClick(option, index)}>
-                                        {option.Icon && <option.Icon size={20} />}
+                                            handleClick(option, index)
+                                        }}>
+                                        {option.Icon && <option.Icon />}
                                         {option.label}
                                     </DropdownMenuItem>
                                 )
@@ -434,7 +436,6 @@ const EditMenu = ({
 
     return (
         <DropdownMenu
-            modal={false}
             open={isOpen}
             onOpenChange={(value) => {
                 onOpenChange(value)
@@ -447,25 +448,27 @@ const EditMenu = ({
                     <EditAppIcon size={20} />
                 </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent
                 align='start'
                 className='min-w-52'>
                 {getCurrentOptions().map((option, index) => {
                     return 'isSeparator' in option ? (
-                        <div
-                            key={index}
-                            className='w-full border-b border-border'
-                        />
+                        <DropdownMenuSeparator key={index} />
                     ) : (
                         <DropdownMenuItem
-                            className='flex items-center gap-2'
-                            isActive={option.isActive}
-                            isDanger={option.isDanger}
+                            variant={
+                                option.isActive
+                                    ? 'active'
+                                    : option.isDanger
+                                      ? 'destructive'
+                                      : 'default'
+                            }
                             key={option.label}
-                            onSelect={(e) => e.preventDefault()}
-                            onClick={() => handleClick(option, index)}>
-                            {option.Icon && <option.Icon size={20} />}
+                            onSelect={(e) => {
+                                e.preventDefault()
+                                handleClick(option, index)
+                            }}>
+                            {option.Icon && <option.Icon />}
                             {option.label}
                         </DropdownMenuItem>
                     )

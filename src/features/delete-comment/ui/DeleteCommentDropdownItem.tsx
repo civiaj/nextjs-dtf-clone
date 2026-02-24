@@ -24,10 +24,11 @@ export const DeleteCommentDropdownItem = ({
     if (!isConfirmed) {
         return (
             <DropdownMenuItem
-                className='flex items-center gap-3'
-                onSelect={(e) => e.preventDefault()}
-                onClick={() => setIsConfirmed(true)}>
-                <TrashAppIcon size={20} />
+                onSelect={(e) => {
+                    e.preventDefault()
+                    setIsConfirmed(true)
+                }}>
+                <TrashAppIcon />
                 Удалить комментарий
             </DropdownMenuItem>
         )
@@ -35,11 +36,9 @@ export const DeleteCommentDropdownItem = ({
 
     return (
         <DropdownMenuItem
-            isDanger
-            className='flex items-center gap-3'
-            onSelect={(e) => e.preventDefault()}
+            variant='destructive'
             onClick={onDeleteComment}>
-            <TrashAppIcon size={20} />
+            <TrashAppIcon />
             Точно удалить?
         </DropdownMenuItem>
     )

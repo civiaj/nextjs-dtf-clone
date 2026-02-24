@@ -1,7 +1,7 @@
 import { Container, ContainerPadding } from '@/shared/ui/box'
 import { LinksBar } from '@/shared/ui/LinksBar'
 import { BookmarksPageSortDropdown } from './BookmarksPageSortDropdown'
-import { BOOKMARKS_PAGE_NAV_LINKS } from '../model/page-nav-links'
+import { BOOKMARKS_PAGE_NAV_LINKS } from '../model/constants'
 
 export const BookmarksPageLayout = ({ children }: { children: React.ReactNode }) => {
     return (

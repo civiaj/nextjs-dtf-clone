@@ -20,7 +20,7 @@ export const EditPostDropdownItem = ({
 
     return (
         <DropdownMenuItem onClick={() => router.push(`${PATH.EDITOR}?id=${postId}`)}>
-            <SquarePenAppIcon size={20} />
+            <SquarePenAppIcon />
             Редактировать
         </DropdownMenuItem>
     )

@@ -4,7 +4,7 @@ import {
     TReactionConfig,
     TReactionMetrics,
     TReactionPostSelect,
-    TReactionTarget,
+    ReactionTarget,
     TReactionValueSelect
 } from '@/shared/types/reaction.types'
 
@@ -24,13 +24,13 @@ export interface IReactionValueRepository {
 }
 
 export interface IReactionService {
-    update<T extends TReactionTarget = TReactionTarget>(
+    update<T extends ReactionTarget = ReactionTarget>(
         payload: TUpdateReactionPayload & { target: T }
     ): Promise<TReactionMetrics>
-    getAll<T extends TReactionTarget = TReactionTarget>(
+    getAll<T extends ReactionTarget = ReactionTarget>(
         payload: TGetAllReactionPayload & { target: T }
     ): Promise<TPageResult<TReactionConfig[T]['select']>>
-    getMetrics<T extends TReactionTarget = TReactionTarget>(
+    getMetrics<T extends ReactionTarget = ReactionTarget>(
         payload: TGetReactionMetricsPayload & { target: T }
     ): Promise<TReactionConfig[T]['metrics']>
 }

@@ -19,7 +19,7 @@
         --accent-foreground: 240 5.9% 10%;
         --active: 216 100% 58%;
         --active-foreground: 0 0% 98%;
-        --destructive: 358, 100%, 38%;
+        --destructive: 358 100% 38%;
         --destructive-foreground: 0 0% 98%;
         --border: 240 5.9% 90%;
         --color-branch: 240 5.9% 90%;
@@ -59,7 +59,7 @@
         --secondary-foreground: 220 12% 88%;
         --muted: 240 3.7% 15.9%;
         --muted-foreground: 220 9% 72%;
-        --accent: 216, 100%, 58%;
+        --accent: 216 100% 58%;
         --accent-foreground: 0 0% 98%;
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 0 0% 98%;

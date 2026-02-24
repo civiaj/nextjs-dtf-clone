@@ -14,7 +14,7 @@ export const ToggleSidebarButton = () => {
             size={'icon-base'}
             className='hidden lg:flex'
             onClick={() => dispatch(uiActions.toggleSidebar())}>
-            <MenuAppIcon size={24} />
+            <MenuAppIcon />
         </Button>
     )
 }

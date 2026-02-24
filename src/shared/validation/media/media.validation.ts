@@ -30,5 +30,3 @@ export const videoSchema = z.object({
     thumbnail: z.string(),
     type: z.literal(FileType.video)
 })
-
-// size int positive

@@ -21,12 +21,8 @@ export const MuteUserDropdownItem = ({ id, isActive }: { isActive: boolean; id: 
         <DropdownMenuItem
             onClick={handleMuteUpdate}
             disabled={isLoading}
-            isActive={isActive}
-            className='flex items-center gap-3'>
-            <Icon
-                size={20}
-                className='shrink-0'
-            />
+            variant={isActive ? 'active' : 'default'}>
+            <Icon />
             {title}
         </DropdownMenuItem>
     )

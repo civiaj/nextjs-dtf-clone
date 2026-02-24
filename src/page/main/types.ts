@@ -1,4 +1,4 @@
-import { TDropDownOption } from '@/shared/ui/dropdown-menu'
+import { DropDownOption } from '@/shared/ui/dropdown-menu'
 import {
     PostMainFeedSort,
     PostOwnerContentSort,
@@ -6,9 +6,9 @@ import {
 } from '@/shared/validation/post.schema'
 
 export type TMainPageSortMap = {
-    popular: TDropDownOption<PostMainFeedSort>[]
-    new: TDropDownOption<PostRecentContentSort>[]
-    my: TDropDownOption<PostOwnerContentSort>[]
+    popular: DropDownOption<PostMainFeedSort>[]
+    new: DropDownOption<PostRecentContentSort>[]
+    my: DropDownOption<PostOwnerContentSort>[]
 }
 
 export type TMainPageSortAll = PostMainFeedSort | PostRecentContentSort | PostOwnerContentSort

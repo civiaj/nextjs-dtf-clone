@@ -1,4 +1,4 @@
-import { TDropDownOption } from '@/shared/ui/dropdown-menu'
+import { DropDownOption } from '@/shared/ui/dropdown-menu'
 import {
     PostMainFeedSort,
     PostOwnerContentSort,
@@ -6,18 +6,18 @@ import {
 } from '@/shared/validation/post.schema'
 import { TMainPageSortMap } from '../types'
 
-const POST_OWNER_CONTENT_SORT: TDropDownOption<PostOwnerContentSort>[] = [
+const POST_OWNER_CONTENT_SORT: DropDownOption<PostOwnerContentSort>[] = [
     { label: 'По дате', value: 'new' },
     { label: 'По популярности', value: 'popular' }
 ]
 
-const POST_RECENT_SORT: TDropDownOption<PostRecentContentSort>[] = [
+const POST_RECENT_SORT: DropDownOption<PostRecentContentSort>[] = [
     { label: 'Новое', value: 'latest' },
     { label: '+5 часов', value: 'latest-5' },
     { label: '+10 часов', value: 'latest-10' }
 ]
 
-const POST_FEED_SORT: TDropDownOption<PostMainFeedSort>[] = [
+const POST_FEED_SORT: DropDownOption<PostMainFeedSort>[] = [
     {
         label: new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }),
         value: 'hotness'

@@ -1,12 +1,12 @@
 import { PATH } from '@/shared/constants'
 import { TUser } from '@/shared/types/user.types'
-import { TDropDownOption } from '@/shared/ui/dropdown-menu'
+import { DropDownOption } from '@/shared/ui/dropdown-menu'
 import { TLinksBarItem } from '@/shared/ui/LinksBar'
 import { UserCommentsSort } from '@/shared/validation/comment.schema'
 import { UserPostsSort } from '@/shared/validation/post.schema'
 import { TUserPageSortMap } from './types'
 
-export const USER_POSTS_SORT_OPTIONS: TDropDownOption<UserPostsSort>[] = [
+export const USER_POSTS_SORT_OPTIONS: DropDownOption<UserPostsSort>[] = [
     { label: 'Свежее', value: 'new' },
     { label: 'Популярное', value: 'hotness' },
     { label: 'Топ за месяц', value: 'month' },
@@ -14,7 +14,7 @@ export const USER_POSTS_SORT_OPTIONS: TDropDownOption<UserPostsSort>[] = [
     { label: 'Топ за все время', value: 'all' }
 ]
 
-export const USER_COMMENTS_SORT_OPTIONS: TDropDownOption<UserCommentsSort>[] = [
+export const USER_COMMENTS_SORT_OPTIONS: DropDownOption<UserCommentsSort>[] = [
     { label: 'Свежее', value: 'new' },
     { label: 'Популярное', value: 'hotness' },
     { label: 'Топ за месяц', value: 'month' },

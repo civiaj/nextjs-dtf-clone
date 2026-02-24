@@ -1,13 +1,13 @@
 'use client'
 
 import { notFound, usePathname } from 'next/navigation'
-import { BOOKMARKS_PAGE_SECTION, TBookmarksPageSection } from '@/shared/types/comment.types'
-import { TBookmarksPageSlugAll } from '../../types'
-import { BOOKMARKS_PAGE_SORT } from '../page-filters'
+import { BOOKMARKS_PAGE_SECTION, BookmarksPageSection } from '@/shared/types/comment.types'
+import { BOOKMARKS_PAGE_SORT_OPTIONS } from '../constants'
+import { BookmarksPageSlug } from '../types'
 
 export const useBookmarksPageRoute = (): {
-    slugValue: TBookmarksPageSlugAll
-    sectionValue: TBookmarksPageSection
+    slugValue: BookmarksPageSlug
+    sectionValue: BookmarksPageSection
 } => {
     const pathname = usePathname()
     const segments = pathname.split('/').filter(Boolean)
@@ -21,27 +21,27 @@ export const useBookmarksPageRoute = (): {
     }
 
     if (!slugValue) {
-        const filters = BOOKMARKS_PAGE_SORT[sectionValue as TBookmarksPageSection]
+        const filters = BOOKMARKS_PAGE_SORT_OPTIONS[sectionValue as BookmarksPageSection]
         slugValue = filters[0].value
     } else if (!isBookmarksPageSort(slugValue, sectionValue)) {
         return notFound()
     }
 
     return {
-        sectionValue: sectionValue as TBookmarksPageSection,
-        slugValue: slugValue as TBookmarksPageSlugAll
+        sectionValue: sectionValue as BookmarksPageSection,
+        slugValue: slugValue as BookmarksPageSlug
     }
 }
 
-const isBookmarksPageSection = (value: unknown): value is TBookmarksPageSection => {
-    return BOOKMARKS_PAGE_SECTION.includes(value as TBookmarksPageSection)
+const isBookmarksPageSection = (value: unknown): value is BookmarksPageSection => {
+    return BOOKMARKS_PAGE_SECTION.includes(value as BookmarksPageSection)
 }
 
 const isBookmarksPageSort = (
     value: unknown,
-    section: TBookmarksPageSection
-): value is TBookmarksPageSlugAll => {
-    return BOOKMARKS_PAGE_SORT[section]
+    section: BookmarksPageSection
+): value is BookmarksPageSlug => {
+    return BOOKMARKS_PAGE_SORT_OPTIONS[section]
         .map(({ value }) => value)
-        .includes(value as TBookmarksPageSlugAll)
+        .includes(value as BookmarksPageSlug)
 }

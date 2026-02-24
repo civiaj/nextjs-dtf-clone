@@ -48,7 +48,7 @@ const UserPageProfileCardContent = memo(({ user }: { user: TUser }) => {
                     coverY={user.coverY}
                     id={user.id}
                 />
-                <ContainerPadding className='-mt-10 flex items-end justify-between gap-2 pt-0 sm:-mt-12 md:pt-0'>
+                <ContainerPadding className='-mt-10 flex items-end justify-between gap-2 pt-0 sm:-mt-20'>
                     <UserProfileAvatar
                         name={user.name}
                         avatar={user.avatar}

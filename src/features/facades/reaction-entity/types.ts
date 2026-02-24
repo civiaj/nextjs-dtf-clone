@@ -3,7 +3,7 @@ import {
     TReactionConfig,
     TReactionEntityData,
     TReactionMetrics,
-    TReactionTarget
+    ReactionTarget
 } from '@/shared/types/reaction.types'
 import { ButtonProps } from '@/shared/ui/button'
 
@@ -26,7 +26,7 @@ export type TReactionBarContextProviderProps = Pick<
     'size' | 'id' | 'target' | 'onSuccess'
 > & { children: React.ReactNode }
 
-export type TUpdateEntityReactionHook<T extends TReactionTarget = TReactionTarget> = {
+export type TUpdateEntityReactionHook<T extends ReactionTarget = ReactionTarget> = {
     onSuccess?: () => void
     id: TReactionConfig[T]['id']
     target: T

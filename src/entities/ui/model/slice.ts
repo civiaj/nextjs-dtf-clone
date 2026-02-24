@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { TMainPageSection } from '@/shared/types/comment.types'
+import { AppTheme } from './types'
 
-export type TTheme = 'dark' | 'light' | 'system'
 type InitialState = {
     sidebarIsOpen: boolean
     defaultFeed: TMainPageSection
-    theme: TTheme
+    theme: AppTheme
 }
 
-export const getResolvedTheme = (theme: TTheme): 'dark' | 'light' => {
+export const getResolvedTheme = (theme: AppTheme): Exclude<AppTheme, 'system'> => {
     if (typeof window === 'undefined') return 'light'
     if (theme === 'system') {
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -32,7 +32,7 @@ const uiSlice = createSlice({
         setDefaultFeed: (state, action: PayloadAction<TMainPageSection>) => {
             state.defaultFeed = action.payload
         },
-        setTheme: (state, action: PayloadAction<TTheme>) => {
+        setTheme: (state, action: PayloadAction<AppTheme>) => {
             state.theme = getResolvedTheme(action.payload)
         }
     }

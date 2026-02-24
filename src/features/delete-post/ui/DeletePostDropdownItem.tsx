@@ -72,8 +72,7 @@ export const DeletePostDropdownItem = ({ postId, userId, onClose, title }: Props
         <DropdownMenuItem
             disabled={isLoading}
             onClick={handleClick}
-            isDanger
-            onSelect={(e) => e.preventDefault()}>
+            variant='destructive'>
             <TrashAppIcon size={20} />
             {title ?? 'Точно удалить?'}
         </DropdownMenuItem>

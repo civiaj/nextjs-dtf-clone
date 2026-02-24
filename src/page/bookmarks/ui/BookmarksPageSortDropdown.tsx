@@ -2,25 +2,24 @@
 
 import { useRouter } from 'next/navigation'
 import { PATH } from '@/shared/constants'
-import { DropDownFilter, TDropDownOption } from '@/shared/ui/dropdown-menu'
+import { DropDownFilter, DropDownOption } from '@/shared/ui/dropdown-menu'
+import { BOOKMARKS_PAGE_SORT_OPTIONS } from '../model/constants'
 import { useBookmarksPageRoute } from '../model/hooks/useBookmarksPageRoute'
-import { BOOKMARKS_PAGE_SORT } from '../model/page-filters'
-import { TBookmarksPageSlugAll } from '../types'
+import { BookmarksPageSlug } from '../model/types'
 
 export const BookmarksPageSortDropdown = () => {
     const { sectionValue, slugValue } = useBookmarksPageRoute()
     const router = useRouter()
 
-    const onClick = (option: TDropDownOption<TBookmarksPageSlugAll>) => {
-        router.push(`${PATH.MAIN}/${sectionValue}/${option.value}`, { scroll: false })
+    const handleClick = ({ value }: DropDownOption<BookmarksPageSlug>) => {
+        router.push(`${PATH.MAIN}/${sectionValue}/${value}`, { scroll: false })
     }
 
     return (
         <DropDownFilter
-            align='end'
+            options={BOOKMARKS_PAGE_SORT_OPTIONS[sectionValue]}
             filter={slugValue}
-            options={BOOKMARKS_PAGE_SORT[sectionValue]}
-            onClick={onClick}
+            onClick={handleClick}
         />
     )
 }

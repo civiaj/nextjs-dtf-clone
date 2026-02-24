@@ -23,4 +23,4 @@ export const USER_PAGE_SECTION = ['posts', 'comments'] as const
 export type TUserPageSection = (typeof USER_PAGE_SECTION)[number]
 
 export const BOOKMARKS_PAGE_SECTION = ['bookmarks', 'reactions'] as const
-export type TBookmarksPageSection = (typeof BOOKMARKS_PAGE_SECTION)[number]
+export type BookmarksPageSection = (typeof BOOKMARKS_PAGE_SECTION)[number]

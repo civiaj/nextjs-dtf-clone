@@ -53,7 +53,6 @@ export const UserProfileAvatarOwnerOverlay = ({
         <>
             <UserProfileAvatarImage
                 key={avatar?.id ?? 0}
-                className='h-full w-full'
                 ref={avatarRef}
                 avatar={avatar}
                 avatarColor={avatarColor}
@@ -80,19 +79,17 @@ export const UserProfileAvatarOwnerOverlay = ({
                                 <MediaAppIcon size={26} />
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            align='start'
-                            className='min-w-40'>
+                        <DropdownMenuContent align='start'>
                             <DropdownMenuItem onClick={handleOpenAvatarPreview}>
-                                <EyeOpenAppIcon size={20} />
+                                <EyeOpenAppIcon />
                                 Посмотреть
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleOpenFileInput}>
-                                <EditAppIcon size={20} />
+                                <EditAppIcon />
                                 Изменить
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleAvatarRemove}>
-                                <TrashAppIcon size={20} />
+                                <TrashAppIcon />
                                 Удалить
                             </DropdownMenuItem>
                         </DropdownMenuContent>

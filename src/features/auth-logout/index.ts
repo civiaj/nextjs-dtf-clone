@@ -1,1 +1,1 @@
-export { LogoutButton } from './ui/LogoutButton'
+export { LogoutDropdownItem } from './ui/LogoutDropdownItem'

@@ -1,10 +1,11 @@
 import { useAppDispatch, useAppSelector } from '@/lib/store'
 import { ContainerPadding } from '@/shared/ui/box'
-import { DropDownFilter } from '@/shared/ui/dropdown-menu'
+import { DropDownFilter, DropDownOption } from '@/shared/ui/dropdown-menu'
 import { Text } from '@/shared/ui/text'
 import { getNoun } from '@/shared/utils/string.utils'
-import { commentsTreeActions } from '@/widgets/post-comments-tree/model/slice'
+import { PostCommentsSort } from '@/shared/validation/comment.schema'
 import { POST_COMMENTS_SORT_OPTIONS } from '../constants'
+import { commentsTreeActions } from '../model/slice'
 
 export const CommentsTreeHeader = ({ commentCount }: { commentCount: number }) => {
     const dispatch = useAppDispatch()
@@ -13,6 +14,9 @@ export const CommentsTreeHeader = ({ commentCount }: { commentCount: number }) =
         commentCount === 0
             ? 'Начать дискуссию'
             : `${commentCount} ${getNoun(commentCount, 'Комментарий', 'Комментария', 'Комментариев')}`
+    const handleClick = ({ value }: DropDownOption<PostCommentsSort>) => {
+        dispatch(commentsTreeActions.setSortBy(value))
+    }
 
     return (
         <ContainerPadding className='flex items-start justify-between'>
@@ -25,7 +29,7 @@ export const CommentsTreeHeader = ({ commentCount }: { commentCount: number }) =
                 align='end'
                 options={POST_COMMENTS_SORT_OPTIONS}
                 filter={sortBy}
-                onClick={({ value }) => dispatch(commentsTreeActions.setSortBy(value))}
+                onClick={handleClick}
             />
         </ContainerPadding>
     )

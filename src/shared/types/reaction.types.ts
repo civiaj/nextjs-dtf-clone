@@ -9,13 +9,7 @@ import { TComment } from '@/shared/types/comment.types'
 import { TPost } from '@/shared/types/post.types'
 
 export const reactionTarget = ['POST', 'COMMENT'] as const
-export type TReactionTarget = (typeof reactionTarget)[number]
-export const reactionTargetSlugMap = {
-    posts: 'POST',
-    comments: 'COMMENT'
-} as const
-
-export type TReactionTargetSlug = keyof typeof reactionTargetSlugMap
+export type ReactionTarget = (typeof reactionTarget)[number]
 
 export type TReactionPostSelect = Prisma.ReactionPostGetPayload<{
     select: typeof reactionPostSelect

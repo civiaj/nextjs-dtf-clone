@@ -11,10 +11,8 @@ export const CopyUrlDropdownItem = ({ url }: { url: string }) => {
     }
 
     return (
-        <DropdownMenuItem
-            onClick={handleCopy}
-            className='flex items-center gap-3'>
-            <CopyAppIcon size={20} />
+        <DropdownMenuItem onClick={handleCopy}>
+            <CopyAppIcon />
             Копировать ссылку
         </DropdownMenuItem>
     )

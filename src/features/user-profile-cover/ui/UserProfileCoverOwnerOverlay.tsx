@@ -237,23 +237,23 @@ const EditableOverlay = ({
                     disabled={isLoading}
                     variant={'base-light'}
                     size={'sm'}>
-                    <EditAppIcon size={16} />
+                    <EditAppIcon />
                     Редактировать обложку
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align='end'
-                className='min-w-40'>
+                className='min-w-36'>
                 <DropdownMenuItem onClick={openFileInput}>
-                    <EditAppIcon size={20} />
+                    <EditAppIcon />
                     Изменить
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onStartEdit}>
-                    <SettingsAppIcon size={20} />
+                    <SettingsAppIcon />
                     Настроить
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDelete}>
-                    <TrashAppIcon size={20} />
+                    <TrashAppIcon />
                     Удалить
                 </DropdownMenuItem>
             </DropdownMenuContent>

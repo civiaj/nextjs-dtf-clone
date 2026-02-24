@@ -107,14 +107,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 className={buttonClassname}
                 {...props}>
                 <div className={cn('flex items-center justify-center gap-2', containerClassname)}>
-                    <span
+                    <div
                         className={cn(
-                            'flex items-center justify-center gap-2',
+                            'flex items-center justify-center gap-2 [&>svg]:size-5 [&>svg]:shrink-0',
                             { ['opacity-0']: isLoading },
                             containerClassname
                         )}>
                         {children}
-                    </span>
+                    </div>
                     {isLoading && (
                         <span className='absolute inset-0 flex items-center justify-center opacity-100'>
                             <Spinner className={spinnerSizes[size!]} />
