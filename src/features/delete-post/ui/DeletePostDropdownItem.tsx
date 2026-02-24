@@ -27,7 +27,7 @@ export const DeletePostDropdownItemWithModal = ({ postId, userId, onClose, title
             <DropdownMenuItem
                 onClick={() => setIsModal(true)}
                 onSelect={(e) => e.preventDefault()}>
-                <TrashAppIcon size={20} />
+                <TrashAppIcon />
                 Удалить
             </DropdownMenuItem>
             <DeletePostModal
@@ -63,7 +63,7 @@ export const DeletePostDropdownItem = ({ postId, userId, onClose, title }: Props
             <DropdownMenuItem
                 onClick={() => setIsConfirmed(true)}
                 onSelect={(e) => e.preventDefault()}>
-                <TrashAppIcon size={20} />
+                <TrashAppIcon />
                 Удалить
             </DropdownMenuItem>
         )
@@ -73,7 +73,7 @@ export const DeletePostDropdownItem = ({ postId, userId, onClose, title }: Props
             disabled={isLoading}
             onClick={handleClick}
             variant='destructive'>
-            <TrashAppIcon size={20} />
+            <TrashAppIcon />
             {title ?? 'Точно удалить?'}
         </DropdownMenuItem>
     )

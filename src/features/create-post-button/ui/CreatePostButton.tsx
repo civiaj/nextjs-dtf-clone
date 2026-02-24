@@ -25,7 +25,7 @@ export const CreatePostButton = () => {
             onClick={handleClick}
             rounedness={'full'}
             variant={'base'}>
-            <EditAppIcon size={20} />
+            <EditAppIcon />
             Написать
         </Button>
     )

@@ -26,7 +26,7 @@ export const UnfollowUserDropdownItem = ({
             disabled={isLoading}
             className='flex items-center gap-3'
             onClick={handleUnfollow}>
-            <UserUnsubscribeAppIcon size={20} />
+            <UserUnsubscribeAppIcon />
             {title}
         </DropdownMenuItem>
     )

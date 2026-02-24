@@ -22,7 +22,7 @@ export const PostEntityActionsDropdown = ({ actions }: Props) => {
                     rounedness='full'
                     variant='ghost'
                     size='icon-md'>
-                    <DotsAppIcon size={24} />
+                    <DotsAppIcon />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent

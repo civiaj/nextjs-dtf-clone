@@ -28,7 +28,7 @@ export const MetricsButton = forwardRef<
                     buttonVariants({ size: 'icon-md', rounedness: 'full', variant: 'ghost' }),
                     'group-hover:bg-active/10 group-hover:text-active'
                 )}>
-                <Icon size={20} />
+                <Icon />
             </div>
 
             {count > 0 && (

@@ -22,8 +22,8 @@ export const ChangeThemeDropdownItem = () => {
     return (
         <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-                {theme === 'dark' && <MoonAppIcon size={20} />}
-                {theme === 'light' && <SunAppIcon size={20} />}
+                {theme === 'dark' && <MoonAppIcon />}
+                {theme === 'light' && <SunAppIcon />}
                 <Text as='p'>Тема</Text>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>

@@ -346,7 +346,7 @@ const CreateMenu = ({
                 <Button
                     variant={'ghost'}
                     size={'icon-sm'}>
-                    <PlusAppIcon size={20} />
+                    <PlusAppIcon />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='start'>
@@ -445,7 +445,7 @@ const EditMenu = ({
                 <Button
                     variant={'ghost'}
                     size={'icon-sm'}>
-                    <EditAppIcon size={20} />
+                    <EditAppIcon />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent

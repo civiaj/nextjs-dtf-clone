@@ -26,12 +26,11 @@ export const PublishedPostShareDropdown = ({ slug }: Pick<TPost, 'slug'>) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='start'>
                 <CopyUrlDropdownItem url={url} />
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                     <Link
-                        className='flex items-center gap-3'
                         href={shareUrl}
                         target='_blank'>
-                        <TelegramAppIcon size={20} />
+                        <TelegramAppIcon />
                         Поделиться в Telegram
                     </Link>
                 </DropdownMenuItem>

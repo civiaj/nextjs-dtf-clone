@@ -61,7 +61,7 @@ const UserPageProfileCardContent = memo(({ user }: { user: TUser }) => {
                                 tabIndex={-1}
                                 variant={'outline'}
                                 size={'icon-base'}>
-                                <SettingsAppIcon size={24} />
+                                <SettingsAppIcon />
                             </Button>
                         </Link>
                     ) : (
@@ -76,7 +76,7 @@ const UserPageProfileCardContent = memo(({ user }: { user: TUser }) => {
                                     <Button
                                         variant={'outline'}
                                         size={'icon-base'}>
-                                        <DotsAppIcon size={24} />
+                                        <DotsAppIcon />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align='end'>

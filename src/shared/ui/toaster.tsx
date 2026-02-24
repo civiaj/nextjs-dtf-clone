@@ -47,7 +47,7 @@ function Toast(props: ToastProps) {
             <div className='flex flex-col gap-2 p-3'>
                 <div className='flex gap-2'>
                     <Icon
-                        size={24}
+                        size={20}
                         className={cn('shrink-0', {
                             ['text-green-500']: type === 'success',
                             ['text-destructive']: type === 'warning',

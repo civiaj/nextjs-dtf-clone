@@ -34,10 +34,12 @@ export const MutePostDropdownItem = ({
     return (
         <>
             <DropdownMenuItem
-                onSelect={(e) => e.preventDefault()}
-                className='flex items-center gap-3'
-                onClick={() => setIsModal(true)}>
-                <EyeCloseAppIcon size={20} />
+                onSelect={(e) => {
+                    e.preventDefault()
+                    setIsModal(true)
+                }}
+                className='flex items-center gap-3'>
+                <EyeCloseAppIcon />
                 Скрыть
             </DropdownMenuItem>
             {isModal && (
