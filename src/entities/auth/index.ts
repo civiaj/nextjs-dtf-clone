@@ -5,7 +5,6 @@ export {
     useLogoutMutation,
     useRefreshQuery,
     useSignupMutation,
-    useUpdateOwnerMutation,
     useLazyGetOwnerQuery
 } from './model/service'
 export { useAuthGuard } from './model/hooks/useAuthGuard'

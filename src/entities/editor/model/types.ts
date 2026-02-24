@@ -30,6 +30,7 @@ export type HeadingData = HeadingTool['data']
 
 type MediaTool = z.infer<typeof mediaSchema>
 export type MediaToolData = ToolData<MediaTool>
+export type MediaToolDataItem = MediaToolData['items'][number]
 export type MediaData = MediaTool['data']
 
 type ListTool = z.infer<typeof listSchema>

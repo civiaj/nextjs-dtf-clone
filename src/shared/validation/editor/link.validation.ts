@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { imageSchema } from '@/shared/validation/media/media.validation'
+import { imageSchema } from '@/shared/validation/media.validation'
 import { baseDataSchema } from './common'
 
 const linkDataSchema = z
