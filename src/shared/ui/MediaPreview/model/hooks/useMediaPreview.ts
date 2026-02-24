@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import PhotoSwipeLightbox from 'photoswipe/lightbox'
 import { TPreviewProps } from '../../types'
 import ObjectPosition from '../photoswipe-object-position'
@@ -11,6 +11,8 @@ export const useMediaPreview = ({
     onCaptionChange?: TPreviewProps['onCaptionChange']
 }) => {
     const containerId = useId()
+    const captionChangeRef = useRef<TPreviewProps['onCaptionChange']>(onCaptionChange)
+    captionChangeRef.current = onCaptionChange
 
     useEffect(() => {
         const lightbox = new PhotoSwipeLightbox({
@@ -52,7 +54,7 @@ export const useMediaPreview = ({
 
         lightbox.on('uiRegister', () => {
             if (lightbox.pswp) {
-                registerPhotoSwipeCaption(lightbox.pswp, onCaptionChange)
+                registerPhotoSwipeCaption(lightbox.pswp, () => captionChangeRef.current)
             }
         })
 
@@ -61,7 +63,7 @@ export const useMediaPreview = ({
         return () => {
             lightbox.destroy()
         }
-    }, [containerId, onCaptionChange])
+    }, [containerId])
 
     return { containerId }
 }

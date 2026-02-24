@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
             let image
 
             try {
-                image = (await mediaService.upload(user.id, file)).result
+                image = (await mediaService.upload({ file }, user.id)).result
             } catch (error) {
                 console.log({ error })
             }

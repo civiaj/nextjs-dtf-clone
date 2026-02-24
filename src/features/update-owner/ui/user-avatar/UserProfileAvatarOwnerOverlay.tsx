@@ -10,7 +10,7 @@ import {
 import { FileInput } from '@/shared/ui/FileInput'
 import { LoadingDots } from '@/shared/ui/loading-indicator'
 import { UserProfileAvatarImage } from './UserProfileAvatarImage'
-import { useUpdateOwnerAvatar } from '../model/hooks/useUpdateOwnerAvatar'
+import { useUpdateOwner } from '../../model/hooks/useUpdateOwner'
 
 export const UserProfileAvatarOwnerOverlay = ({
     avatar: initialAvatar,
@@ -22,7 +22,8 @@ export const UserProfileAvatarOwnerOverlay = ({
     const [overlay, setOverlay] = useState<TOverlay>(!initialAvatar ? 'empty' : 'editable')
     const [avatar, setAvatar] = useState(initialAvatar)
 
-    const { isLoading, updateAvatar, removeAvatar } = useUpdateOwnerAvatar()
+    const { isLoading, isMediaUploading, updateProfileAvatar, removeProfileAvatar } =
+        useUpdateOwner()
 
     const handleOpenFileInput = () => {
         fileInputRef.current?.click()
@@ -36,18 +37,24 @@ export const UserProfileAvatarOwnerOverlay = ({
         const file = e.target.files?.[0]
         if (!file) return
         e.currentTarget.value = ''
-        updateAvatar(file, (nextAvatar) => {
-            setOverlay('editable')
-            setAvatar(nextAvatar)
+        updateProfileAvatar(file, {
+            onSuccess: (user) => {
+                setOverlay('editable')
+                setAvatar(user.avatar)
+            }
         })
     }
 
     const handleAvatarRemove = () => {
-        removeAvatar(() => {
-            setOverlay('empty')
-            setAvatar(null)
+        removeProfileAvatar({
+            onSuccess: () => {
+                setOverlay('empty')
+                setAvatar(null)
+            }
         })
     }
+
+    console.log({ isMediaUploading })
 
     return (
         <>
@@ -64,7 +71,7 @@ export const UserProfileAvatarOwnerOverlay = ({
                     <button
                         className='flex h-full w-full items-center justify-center'
                         aria-label='Добавить аватар'
-                        disabled={isLoading}
+                        disabled={isLoading || isMediaUploading}
                         onClick={handleOpenFileInput}>
                         <MediaAppIcon size={26} />
                     </button>
@@ -75,7 +82,7 @@ export const UserProfileAvatarOwnerOverlay = ({
                             <button
                                 className='flex h-full w-full items-center justify-center'
                                 aria-label='Настроить аватар'
-                                disabled={isLoading}>
+                                disabled={isLoading || isMediaUploading}>
                                 <MediaAppIcon size={26} />
                             </button>
                         </DropdownMenuTrigger>
@@ -97,8 +104,8 @@ export const UserProfileAvatarOwnerOverlay = ({
                 )}
             </div>
 
-            {isLoading && (
-                <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
+            {(isLoading || isMediaUploading) && (
+                <div className='absolute inset-0 flex items-center justify-center bg-black/60'>
                     <LoadingDots className='bg-white' />
                 </div>
             )}

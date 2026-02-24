@@ -1,1 +1,1 @@
-export { MediaService } from './service'
+export { mediaService } from './container'

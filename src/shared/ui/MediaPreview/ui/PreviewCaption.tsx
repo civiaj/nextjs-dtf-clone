@@ -57,7 +57,6 @@ const EditableCaption = ({
     onChange: (value: string) => void
 }) => {
     const [value, setValue] = useState(caption)
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value)
         onChange(e.target.value)

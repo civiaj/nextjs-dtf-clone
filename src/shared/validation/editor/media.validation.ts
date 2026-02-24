@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { TextValidation } from '@/shared/utils/text.utils'
-import { imageSchema, videoSchema } from '@/shared/validation/media/media.validation'
+import { imageSchema, videoSchema } from '@/shared/validation/media.validation'
 import { baseDataSchema } from './common'
 import { EDITOR_LIMIT } from './config'
 

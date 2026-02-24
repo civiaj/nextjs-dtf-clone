@@ -6,7 +6,7 @@ import { LinkToolData, editorService } from '@/entities/editor'
 import { formatErrorMessage } from '@/lib/error'
 import { getStore } from '@/lib/store'
 import { showToast } from '@/shared/ui/toaster'
-import { imageSchema } from '@/shared/validation/media/media.validation'
+import { imageSchema } from '@/shared/validation/media.validation'
 import { EditorBlockArgs, EditorBlockTool } from '../model/types'
 
 export default class Link implements EditorBlockTool<LinkToolData | LinkInput> {
