@@ -108,20 +108,13 @@ export const ExtendBlock = <T extends object, C extends Constructor<EditorBlockT
 
         private applyHeadingRules(block: any | undefined, index: number) {
             if (!block || block.name !== 'heading') return
-
-            if (index === 0) {
-                this.state.destroyById(block.id)
-            }
-
             const style = index === 0 ? 'title' : 'heading'
             block.call('updateHeadingstyle', { style })
         }
 
         private updateHeadingStyle() {
             const currentIndex = this.api.blocks.getBlockIndex(this.block.id)
-
             if (currentIndex === undefined) return
-
             this.applyHeadingRules(this.block, currentIndex)
         }
 

@@ -24,7 +24,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     <DropdownMenuPrimitive.SubTrigger
         ref={ref}
         className={cn(
-            'flex select-none items-center gap-2 rounded-xl px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
+            'flex select-none items-center gap-2 rounded-xl px-2 py-1.5 text-sm outline-none focus:bg-accent data-[highlighted]:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0',
             inset && 'pl-8',
             className
         )}
@@ -82,7 +82,7 @@ const DropdownMenuItem = React.forwardRef<
             ref={ref}
             data-variant={variant}
             className={cn(
-                'data-[variant=destructive]:*:[svg]:text-destructive not-data-[variant=destructive]:focus:**:text-accent-foreground data-[variant=active]:*:[svg]:text-active not-data-[variant=active]:focus:**:text-accent-foreground relative flex select-none items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-medium outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[variant=active]:text-active data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=active]:focus:bg-active/10 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=active]:focus:text-active data-[variant=destructive]:focus:text-destructive dark:data-[variant=active]:focus:bg-active/20 dark:data-[variant=destructive]:focus:bg-destructive/20 [&>svg]:size-5 [&>svg]:shrink-0',
+                'data-[variant=destructive]:*:[svg]:text-destructive data-[variant=active]:*:[svg]:text-active not-data-[variant=active]:focus:**:text-accent-foreground relative flex select-none items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-medium outline-none transition-colors focus:text-accent-foreground data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:data-[variant=active]:bg-active/10 data-[highlighted]:data-[variant=destructive]:bg-destructive/10 data-[variant=active]:text-active data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=active]:focus:bg-active/10 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=active]:focus:text-active data-[variant=destructive]:focus:text-destructive dark:data-[variant=active]:focus:bg-active/20 [&>svg]:size-5 [&>svg]:shrink-0',
                 inset && 'pl-8',
                 className
             )}
