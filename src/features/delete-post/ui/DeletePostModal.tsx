@@ -55,12 +55,14 @@ export const DeletePostModal = ({
                     )}
                     <div className='flex gap-4 place-self-end'>
                         <Button
+                            type='button'
                             onClick={onCloseModal}
                             variant={'outline'}>
                             Отменить
                         </Button>
                         <Button
                             type='submit'
+                            variant='destructive'
                             isLoading={isLoading}>
                             Подтвердить
                         </Button>

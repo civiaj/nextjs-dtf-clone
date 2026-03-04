@@ -15,8 +15,9 @@ export const PostEntityActionsDropdown = ({ actions }: Props) => {
 
     return (
         <DropdownMenu
+            modal={false}
             open={isOpen}
-            onOpenChange={() => setIsOpen((prev) => !prev)}>
+            onOpenChange={(open) => setIsOpen(open)}>
             <DropdownMenuTrigger asChild>
                 <Button
                     rounedness='full'
