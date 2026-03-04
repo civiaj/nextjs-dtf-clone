@@ -72,10 +72,7 @@ export function updateTextareaHeight(textarea: HTMLTextAreaElement, minHeight: n
 
     const nextHeight = Math.max(textarea.scrollHeight, minHeight)
 
-    textarea.style.setProperty(
-        '--textarea-height',
-        `${nextHeight}px`
-    )
+    textarea.style.setProperty('--textarea-height', `${nextHeight}px`)
     textarea.style.height = `${nextHeight}px`
 }
 
