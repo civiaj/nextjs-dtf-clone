@@ -6,7 +6,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
         return (
             <input
                 className={cn(
-                    'active-glow flex h-8 w-full rounded-xl !bg-card px-3 text-sm outline-none sm:h-9 sm:text-base',
+                    'active-glow h-8 w-full rounded-xl !bg-card px-3 text-sm outline-none sm:h-9 sm:text-base',
                     className
                 )}
                 ref={ref}
@@ -20,12 +20,33 @@ Input.displayName = 'Input'
 const TextArea = React.forwardRef<
     HTMLTextAreaElement,
     React.TextareaHTMLAttributes<HTMLTextAreaElement> & { minHeight?: number }
->(({ className, minHeight = 96, ...props }, ref) => {
+>(({ className, minHeight = 96, onChange, value, defaultValue, ...props }, ref) => {
+    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null)
+
+    const setRefs = React.useCallback(
+        (node: HTMLTextAreaElement | null) => {
+            textareaRef.current = node
+
+            if (typeof ref === 'function') {
+                ref(node)
+                return
+            }
+
+            if (ref) {
+                ref.current = node
+            }
+        },
+        [ref]
+    )
+
+    React.useLayoutEffect(() => {
+        if (!textareaRef.current) return
+        updateTextareaHeight(textareaRef.current, minHeight)
+    }, [value, defaultValue, minHeight])
+
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        props.onChange?.(e)
-        if (e.target instanceof HTMLTextAreaElement) {
-            updateTextareaHeight(e.target, minHeight)
-        }
+        onChange?.(e)
+        updateTextareaHeight(e.currentTarget, minHeight)
     }
 
     return (
@@ -35,21 +56,24 @@ const TextArea = React.forwardRef<
                 className
             )}
             style={{ minHeight }}
-            ref={ref}
+            ref={setRefs}
             {...props}
+            value={value}
+            defaultValue={defaultValue}
             onChange={handleChange}
         />
     )
 })
 TextArea.displayName = 'TextArea'
 
-function updateTextareaHeight(textarea: HTMLTextAreaElement, minHeight: number) {
+export function updateTextareaHeight(textarea: HTMLTextAreaElement, minHeight: number) {
+    textarea.style.setProperty('--textarea-height', `${minHeight}px`)
     textarea.style.height = 'auto'
-    textarea.style.setProperty(
-        '--textarea-height',
-        `${Math.max(textarea.scrollHeight, minHeight)}px`
-    )
-    textarea.style.height = 'var(--textarea-height)'
+
+    const nextHeight = Math.max(textarea.scrollHeight, minHeight)
+
+    textarea.style.setProperty('--textarea-height', `${nextHeight}px`)
+    textarea.style.height = `${nextHeight}px`
 }
 
 export { Input, TextArea }

@@ -187,6 +187,18 @@ body.grabbing {
 
 /* EDITOR-JS */
 
+.codex-editor .ce-block--selected .ce-block__content {
+    @apply bg-active/10;
+}
+
+.codex-editor .ce-block--selected .ce-block__content img {
+    @apply opacity-100;
+}
+
+.ce-code__textarea {
+    @apply !p-3;
+}
+
 .ce-separator {
     @apply before:block before:text-center before:text-3xl before:tracking-wider before:content-["***"] md:before:text-4xl;
 }
