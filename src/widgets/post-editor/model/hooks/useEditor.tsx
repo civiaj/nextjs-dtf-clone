@@ -61,11 +61,8 @@ export const useEditor = ({
                         document.querySelector('.ce-toolbar')?.remove()
                         document.querySelector('.codex-editor-overlay')?.remove()
                         document.querySelector('.ct')?.remove()
-                        ;(document.activeElement as HTMLElement)?.blur()
-
-                        if (!isCancelled) {
-                            setIsReady(true)
-                        }
+                        // ;(document.activeElement as HTMLElement)?.blur()
+                        setIsReady(true)
                     }
 
                     setTimeout(afterReady, 0)

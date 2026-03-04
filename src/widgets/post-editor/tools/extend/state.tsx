@@ -93,6 +93,10 @@ export default class BlockState extends EventTarget {
     }
 
     destroy() {
+        if (globalState.openId === this.block.id) {
+            this.setOpenId(null)
+        }
+
         this.setHidden(false)
         this.setCover(false)
         stateRegistry.delete(this.block.id)

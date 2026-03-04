@@ -1,5 +1,6 @@
 import { API, BlockAPI, PasteEvent } from '@editorjs/editorjs'
 import { CodeToolData } from '@/entities/editor'
+import { updateTextareaHeight } from '@/shared/ui/input'
 import { EditorBlockArgs, EditorBlockTool } from '@/widgets/post-editor/model/types'
 
 interface CodeConfig {
@@ -178,6 +179,7 @@ export default class Code implements EditorBlockTool<CodeToolData> {
          * Restore the caret
          */
         textarea.setSelectionRange(newCaretPosition, newCaretPosition)
+        updateTextareaHeight(textarea, 80)
     }
 
     onKeyDown(e: KeyboardEvent) {
@@ -189,15 +191,16 @@ export default class Code implements EditorBlockTool<CodeToolData> {
     }
 
     onInput() {
-        updateTextareaHeight(this.element)
+        updateTextareaHeight(this.element, 80)
     }
 
     destroy() {
         this.element.removeEventListener('keydown', this.onKeyDown)
+        this.element.removeEventListener('input', this.onInput)
     }
 
     rendered() {
-        updateTextareaHeight(this.element)
+        updateTextareaHeight(this.element, 80)
     }
 }
 
@@ -221,10 +224,4 @@ function isCodeData(data?: unknown): data is CodeToolData {
     return (
         typeof data === 'object' && data !== null && 'code' in data && typeof data.code === 'string'
     )
-}
-
-function updateTextareaHeight(textarea: HTMLTextAreaElement) {
-    textarea.style.height = 'auto'
-    textarea.style.setProperty('--textarea-height', `${Math.max(textarea.scrollHeight, 80)}px`)
-    textarea.style.height = 'var(--textarea-height)'
 }
