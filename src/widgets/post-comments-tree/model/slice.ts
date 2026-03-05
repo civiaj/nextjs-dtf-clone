@@ -49,11 +49,7 @@ const commentsTreeSlice = createSlice({
             const key = String(comment.parentId)
             const branch = state.treeIds[key] ?? []
             state.treeIds[key] = [comment.id, ...branch]
-
-            if (comment.parentId) {
-                state.expandedIds[comment.parentId] = true
-            }
-
+            state.expandedIds[key] = true
             state.linearTreeIds = buildLinearOrderFromTree(state.treeIds, state.expandedIds)
         },
         toggleReplyTarget(state, action: PayloadAction<{ id: TComment['id'] }>) {
