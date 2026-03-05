@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo } from 'react'
+import { memo, ReactNode, useMemo } from 'react'
 import { notFound } from 'next/navigation'
 import {
     PostEntityActionsDropdown,
@@ -29,9 +29,18 @@ export type PublishedPostItemProps = {
     id: TPost['id']
     initialData?: TPost
     view: TPostEntityRenderView
+    action?: ReactNode | ((post: TPost) => ReactNode)
+    showDefaultHeaderActions?: boolean
 }
 
-export const PublishedPostItem = memo(({ id, view, initialData }: PublishedPostItemProps) => {
+export const PublishedPostItem = memo(
+    ({
+        id,
+        view,
+        initialData,
+        action,
+        showDefaultHeaderActions = true
+    }: PublishedPostItemProps) => {
     const selectUser = useMemo(makeSelectUser, [])
 
     const { post, isNotFound } = usePostData(id, { serverData: initialData })
@@ -45,39 +54,49 @@ export const PublishedPostItem = memo(({ id, view, initialData }: PublishedPostI
     }
     if (!post || !post.publishedAt || !user) return null
 
+    const actionElement = typeof action === 'function' ? action(post) : action
+    const hasRightSlot = Boolean(actionElement) || showDefaultHeaderActions
+
     return (
         <Container>
             <PostEntityHeader
                 user={user}
                 rightSlot={
-                    <>
-                        <FollowUserButton
-                            id={user.id}
-                            isActive={user.isFollowed}
-                            size={'sm'}
-                            variant={'active-light'}
-                        />
-                        <PostEntityActionsDropdown
-                            actions={({ onClose }) => (
+                    hasRightSlot ? (
+                        <>
+                            {actionElement}
+                            {showDefaultHeaderActions && (
                                 <>
-                                    <EditPostDropdownItem
-                                        userId={user.id}
-                                        postId={id}
+                                    <FollowUserButton
+                                        id={user.id}
+                                        isActive={user.isFollowed}
+                                        size={'sm'}
+                                        variant={'active-light'}
                                     />
-                                    <MutePostDropdownItem
-                                        userId={user.id}
-                                        id={id}
-                                        onCloseDropdown={onClose}
-                                    />
-                                    <DeletePostDropdownItemWithModal
-                                        userId={user.id}
-                                        postId={id}
-                                        onClose={onClose}
+                                    <PostEntityActionsDropdown
+                                        actions={({ onClose }) => (
+                                            <>
+                                                <EditPostDropdownItem
+                                                    userId={user.id}
+                                                    postId={id}
+                                                />
+                                                <MutePostDropdownItem
+                                                    userId={user.id}
+                                                    id={id}
+                                                    onCloseDropdown={onClose}
+                                                />
+                                                <DeletePostDropdownItemWithModal
+                                                    userId={user.id}
+                                                    postId={id}
+                                                    onClose={onClose}
+                                                />
+                                            </>
+                                        )}
                                     />
                                 </>
                             )}
-                        />
-                    </>
+                        </>
+                    ) : null
                 }
                 description={getSinceDate(post.publishedAt)}
                 descriptionExtra={
@@ -117,6 +136,7 @@ export const PublishedPostItem = memo(({ id, view, initialData }: PublishedPostI
             </ContainerPadding>
         </Container>
     )
-})
+}
+)
 
 PublishedPostItem.displayName = 'PublishedPostItem'

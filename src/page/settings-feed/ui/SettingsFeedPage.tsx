@@ -1,7 +1,7 @@
 'use client'
 
 import { AuthGuard } from '@/entities/auth'
-import { UnmuteUserButton } from '@/features/mute'
+import { UnmutePostButton, UnmuteUserButton } from '@/features/mute'
 import { PATH } from '@/shared/constants'
 import { ContainerPadding } from '@/shared/ui/box'
 import { SettingsField, SettingsLayout, SettingsSection } from '@/shared/ui/settings'
@@ -65,7 +65,16 @@ const SettingsFeedPageContent = () => {
                     />
                 </TabsContent>
                 <TabsContent value='posts'>
-                    <PublishedPostList type='owner-muted-posts' />
+                    <PublishedPostList
+                        type='owner-muted-posts'
+                        showDefaultHeaderActions={false}
+                        action={(post) => (
+                            <UnmutePostButton
+                                id={post.id}
+                                title='Разблокировать пост'
+                            />
+                        )}
+                    />
                 </TabsContent>
             </Tabs>
         </>

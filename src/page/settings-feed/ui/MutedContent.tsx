@@ -1,35 +1,11 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { UnmutePostButton } from '@/features/mute'
 import { ContainerPadding } from '@/shared/ui/box'
 import { SettingsSection } from '@/shared/ui/settings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { Text } from '@/shared/ui/text'
-
-const UsersList = dynamic(() => import('@/widgets/users-list').then((module) => module.UsersList), {
-    loading: () => (
-        <Text
-            as='p'
-            size='sm'
-            className='text-muted-foreground'>
-            Загрузка пользователей...
-        </Text>
-    )
-})
-
-const PublishedPostList = dynamic(
-    () => import('@/widgets/post-published').then((module) => module.PublishedPostList),
-    {
-        loading: () => (
-            <Text
-                as='p'
-                size='sm'
-                className='text-muted-foreground'>
-                Загрузка постов...
-            </Text>
-        )
-    }
-)
+import { PublishedPostList } from '@/widgets/post-published'
+import { UsersList } from '@/widgets/users-list'
 
 export const MutedContent = () => {
     return (
@@ -57,7 +33,16 @@ export const MutedContent = () => {
             <TabsContent
                 value='POST'
                 className='mt-0'>
-                <PublishedPostList type='owner-muted-posts' />
+                <PublishedPostList
+                    type='owner-muted-posts'
+                    showDefaultHeaderActions={false}
+                    action={(post) => (
+                        <UnmutePostButton
+                            id={post.id}
+                            title='Разблокировать пост'
+                        />
+                    )}
+                />
             </TabsContent>
         </Tabs>
     )
