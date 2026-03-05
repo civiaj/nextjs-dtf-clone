@@ -21,20 +21,24 @@ type PublishedPostListArgs = (
     | GetOwnerBookmaredPostsInput
     | GetOwnerReactedPostsInput
     | GetOwnerMutedPostsInput
-) &
-    {
-        action?: ReactNode | ((post: TPost) => ReactNode)
-        showDefaultHeaderActions?: boolean
-    }
+) & {
+    action?: ReactNode | ((post: TPost) => ReactNode)
+    showDefaultHeaderActions?: boolean
+}
 
-export const PublishedPostList = (
-    { action, showDefaultHeaderActions, ...args }: PublishedPostListArgs
-) => {
+export const PublishedPostList = ({
+    action,
+    showDefaultHeaderActions,
+    ...args
+}: PublishedPostListArgs) => {
     const isAuthReady = useIsAuthReadyForQueries()
     const entities = useAppSelector((state) => state.post.data.entities)
     const { data, fetchNextPage, isLoading, isFetching, isError, error, isSuccess, hasNextPage } =
         useGetPostAllInfiniteQuery(args, { skip: !isAuthReady })
-    const ids = useMemo(() => data?.pages.flatMap((p) => p.result.items.map((i) => i.id)) ?? [], [data])
+    const ids = useMemo(
+        () => data?.pages.flatMap((p) => p.result.items.map((i) => i.id)) ?? [],
+        [data]
+    )
     const visibleIds = useMemo(() => {
         if (args.type !== 'owner-muted-posts') return ids
         return ids.filter((id) => entities[id]?.isMuted !== false)

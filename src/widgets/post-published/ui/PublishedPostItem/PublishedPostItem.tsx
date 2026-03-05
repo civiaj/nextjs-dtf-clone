@@ -41,102 +41,103 @@ export const PublishedPostItem = memo(
         action,
         showDefaultHeaderActions = true
     }: PublishedPostItemProps) => {
-    const selectUser = useMemo(makeSelectUser, [])
+        const selectUser = useMemo(makeSelectUser, [])
 
-    const { post, isNotFound } = usePostData(id, { serverData: initialData })
-    const user = useAppSelector((state) => selectUser(state, post?.user.id)) ?? initialData?.user
+        const { post, isNotFound } = usePostData(id, { serverData: initialData })
+        const user =
+            useAppSelector((state) => selectUser(state, post?.user.id)) ?? initialData?.user
 
-    if (view === 'full' && isNotFound) {
-        return notFound()
-    }
-    if (view === 'full' && (!post || !post.publishedAt || !user)) {
-        return <PostEntitySkeleton view={view} />
-    }
-    if (!post || !post.publishedAt || !user) return null
+        if (view === 'full' && isNotFound) {
+            return notFound()
+        }
+        if (view === 'full' && (!post || !post.publishedAt || !user)) {
+            return <PostEntitySkeleton view={view} />
+        }
+        if (!post || !post.publishedAt || !user) return null
 
-    const actionElement = typeof action === 'function' ? action(post) : action
-    const hasRightSlot = Boolean(actionElement) || showDefaultHeaderActions
+        const actionElement = typeof action === 'function' ? action(post) : action
+        const hasRightSlot = Boolean(actionElement) || showDefaultHeaderActions
 
-    return (
-        <Container>
-            <PostEntityHeader
-                user={user}
-                rightSlot={
-                    hasRightSlot ? (
-                        <>
-                            {actionElement}
-                            {showDefaultHeaderActions && (
-                                <>
-                                    <FollowUserButton
-                                        id={user.id}
-                                        isActive={user.isFollowed}
-                                        size={'sm'}
-                                        variant={'active-light'}
-                                    />
-                                    <PostEntityActionsDropdown
-                                        actions={({ onClose }) => (
-                                            <>
-                                                <EditPostDropdownItem
-                                                    userId={user.id}
-                                                    postId={id}
-                                                />
-                                                <MutePostDropdownItem
-                                                    userId={user.id}
-                                                    id={id}
-                                                    onCloseDropdown={onClose}
-                                                />
-                                                <DeletePostDropdownItemWithModal
-                                                    userId={user.id}
-                                                    postId={id}
-                                                    onClose={onClose}
-                                                />
-                                            </>
-                                        )}
-                                    />
-                                </>
-                            )}
-                        </>
-                    ) : null
-                }
-                description={getSinceDate(post.publishedAt)}
-                descriptionExtra={
-                    <PublishedPostEditedIndicator
-                        publishedAt={post.publishedAt}
-                        updatedAt={post.updatedAt}
+        return (
+            <Container>
+                <PostEntityHeader
+                    user={user}
+                    rightSlot={
+                        hasRightSlot ? (
+                            <>
+                                {actionElement}
+                                {showDefaultHeaderActions && (
+                                    <>
+                                        <FollowUserButton
+                                            id={user.id}
+                                            isActive={user.isFollowed}
+                                            size={'sm'}
+                                            variant={'active-light'}
+                                        />
+                                        <PostEntityActionsDropdown
+                                            actions={({ onClose }) => (
+                                                <>
+                                                    <EditPostDropdownItem
+                                                        userId={user.id}
+                                                        postId={id}
+                                                    />
+                                                    <MutePostDropdownItem
+                                                        userId={user.id}
+                                                        id={id}
+                                                        onCloseDropdown={onClose}
+                                                    />
+                                                    <DeletePostDropdownItemWithModal
+                                                        userId={user.id}
+                                                        postId={id}
+                                                        onClose={onClose}
+                                                    />
+                                                </>
+                                            )}
+                                        />
+                                    </>
+                                )}
+                            </>
+                        ) : null
+                    }
+                    description={getSinceDate(post.publishedAt)}
+                    descriptionExtra={
+                        <PublishedPostEditedIndicator
+                            publishedAt={post.publishedAt}
+                            updatedAt={post.updatedAt}
+                        />
+                    }
+                />
+                <PostView
+                    view={view}
+                    href={`${PATH.POST}/${post.slug}`}
+                    blocks={post.blocks}
+                />
+                <ContainerPadding smallMargin>
+                    <ReactionBar
+                        size='md'
+                        id={post.id}
+                        target='POST'
+                        reactions={post.reactions}
                     />
-                }
-            />
-            <PostView
-                view={view}
-                href={`${PATH.POST}/${post.slug}`}
-                blocks={post.blocks}
-            />
-            <ContainerPadding smallMargin>
-                <ReactionBar
-                    size='md'
-                    id={post.id}
-                    target='POST'
-                    reactions={post.reactions}
-                />
-            </ContainerPadding>
-            <ContainerPadding
-                smallMargin
-                className='flex gap-1 sm:gap-2'>
-                <PublishedPostCommentsButton
-                    commentCount={post.commentCount}
-                    slug={post.slug}
-                />
-                <UpdateBookmarkMetricsButton
-                    count={post.bookmarkCount}
-                    id={post.id}
-                    isActive={post.isBookmarked}
-                    target='POST'
-                />
-                <PublishedPostShareDropdown slug={post.slug} />
-            </ContainerPadding>
-        </Container>
-    )
-}
+                </ContainerPadding>
+                <ContainerPadding
+                    smallMargin
+                    className='flex gap-1 sm:gap-2'>
+                    <PublishedPostCommentsButton
+                        commentCount={post.commentCount}
+                        slug={post.slug}
+                    />
+                    <UpdateBookmarkMetricsButton
+                        count={post.bookmarkCount}
+                        id={post.id}
+                        isActive={post.isBookmarked}
+                        target='POST'
+                    />
+                    <PublishedPostShareDropdown slug={post.slug} />
+                </ContainerPadding>
+            </Container>
+        )
+    }
 )
 
 PublishedPostItem.displayName = 'PublishedPostItem'
