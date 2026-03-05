@@ -10,41 +10,58 @@ import {
 import { LoadingDots } from '@/shared/ui/loading-indicator'
 import { cn } from '@/shared/utils/common.utils'
 import { ReactionBarButtonIcon } from './ReactionBarButtonIcon'
-import { useReactionBarContext } from '../../model/reaction-bar-context/useReactionBarContext'
+import { reactionBarSizeConfig } from './size'
+import { TReactionBarProps, TReactionMutateFn } from '../../types'
 
-export const ReactionBarDropdown = () => {
-    const { isLoading, size } = useReactionBarContext()
+type TReactionBarDropdownProps = {
+    size: TReactionBarProps['size']
+    isLoading: boolean
+    onReactionClick: TReactionMutateFn
+}
+
+export const ReactionBarDropdown = ({
+    size,
+    isLoading,
+    onReactionClick
+}: TReactionBarDropdownProps) => {
+    const sizeConfig = reactionBarSizeConfig[size]
+
     return (
         <li>
             <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                     <Button
-                        className={cn(
-                            { ['[&_svg]:h-4 [&_svg]:w-4']: size === 'sm' },
-                            { ['[&_svg]:h-5 [&_svg]:w-5']: size === 'md' }
-                        )}
+                        className={cn(sizeConfig.svgClassName)}
                         disabled={isLoading}
                         variant={'secondary'}
                         rounedness={'full'}
-                        size={`icon-${size}`}>
+                        size={sizeConfig.iconButtonSize}>
                         <PlusAppIcon />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                     align='start'
                     className='grid min-h-8 grid-cols-6 rounded-3xl'>
-                    <ReactionBarDropdownContent />
+                    <ReactionBarDropdownContent
+                        size={size}
+                        isLoading={isLoading}
+                        onReactionClick={onReactionClick}
+                    />
                 </DropdownMenuContent>
             </DropdownMenu>
         </li>
     )
 }
 
-const ReactionBarDropdownContent = () => {
+const ReactionBarDropdownContent = ({
+    size,
+    isLoading,
+    onReactionClick
+}: TReactionBarDropdownProps) => {
     const reactions = useAppSelector((state) => state.assets.reactions)
-    const { handleReactionMutation, isLoading } = useReactionBarContext()
+    const sizeConfig = reactionBarSizeConfig[size]
 
-    if (!reactions)
+    if (reactions.length === 0)
         return (
             <div className='col-span-full row-span-full flex items-center justify-center'>
                 <LoadingDots />
@@ -53,13 +70,16 @@ const ReactionBarDropdownContent = () => {
 
     return reactions.map(({ emoji, id, name }) => (
         <DropdownMenuItem
-            className='h-8 w-8 items-center justify-center rounded-full p-0 transition-transform'
+            className={cn(
+                sizeConfig.dropdownItemClassName,
+                'items-center justify-center rounded-full p-0 transition-transform'
+            )}
             key={id}
             disabled={isLoading}
             aria-label={`reaction ${name}`}
-            onClick={() => handleReactionMutation(id)}>
+            onClick={() => onReactionClick(id)}>
             <ReactionBarButtonIcon
-                size='md'
+                size={size}
                 emoji={emoji}
                 name={name}
             />

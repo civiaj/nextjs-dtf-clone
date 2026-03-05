@@ -5,28 +5,39 @@ import { AnimatedNumber } from '@/shared/ui/animated-number'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/utils/common.utils'
 import { ReactionBarButtonIcon } from './ReactionBarButtonIcon'
-import { useReactionBarContext } from '../../model/reaction-bar-context/useReactionBarContext'
-import { TReactionButtonProps } from '../../types'
+import { reactionBarSizeConfig } from './size'
+import { TReactionBarProps, TReactionButtonProps } from '../../types'
+
+type TReactionBarButtonProps = TReactionButtonProps & {
+    size: TReactionBarProps['size']
+    isLoading: boolean
+    onClick?: () => void
+    children?: React.ReactNode
+    className?: string
+}
 
 export const ReactionBarButton = memo(
-    ({ count, emoji, name, id, className, children, ...buttonProps }: TReactionButtonProps) => {
-        const { isLoading, size } = useReactionBarContext()
+    ({
+        count,
+        emoji,
+        name,
+        size,
+        className,
+        isLoading,
+        onClick,
+        children
+    }: TReactionBarButtonProps) => {
+        const sizeConfig = reactionBarSizeConfig[size]
 
         return (
             <Button
                 aria-label={`reaction ${name}`}
-                data-reaction-id={id}
                 size={size}
                 rounedness={'full'}
                 variant={'secondary'}
                 disabled={isLoading}
-                className={cn(
-                    'select-none gap-1',
-                    { ['[&_svg]:h-4 [&_svg]:w-4']: size === 'sm' },
-                    { ['[&_svg]:h-5 [&_svg]:w-5']: size === 'md' },
-                    className
-                )}
-                {...buttonProps}>
+                onClick={onClick}
+                className={cn('select-none', sizeConfig.svgClassName, className)}>
                 {children ? (
                     children
                 ) : (

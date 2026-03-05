@@ -34,7 +34,7 @@ export const AnimatedNumber = memo(
             : 0
 
         return (
-            <div className='inline-flex tabular-nums'>
+            <div className='inline-flex'>
                 {currString.split('').map((digitChar, index) => (
                     <AnimatedDigit
                         key={`${index}-${safeValue}`}

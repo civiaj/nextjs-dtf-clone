@@ -106,11 +106,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 aria-disabled={asChild ? undefined : isDisabled}
                 className={buttonClassname}
                 {...props}>
-                <div className={cn('flex items-center justify-center gap-2', containerClassname)}>
+                <div className={cn('flex items-center justify-center', containerClassname)}>
                     <div
                         className={cn(
                             'flex items-center justify-center gap-2 [&>svg]:size-5 [&>svg]:shrink-0',
-                            { ['opacity-0']: isLoading },
+                            {
+                                ['opacity-0']: isLoading
+                            },
                             containerClassname
                         )}>
                         {children}
