@@ -5,12 +5,14 @@ import { getAtDate } from '@/shared/utils/date.utils'
 
 export const PublishedPostEditedIndicator = ({
     publishedAt,
-    updatedAt
+    lastEditedAt
 }: {
     publishedAt: NonNullable<TPost['publishedAt']>
-    updatedAt: TPost['updatedAt']
+    lastEditedAt: TPost['lastEditedAt']
 }) => {
-    const diffMs = Math.abs(new Date(updatedAt).getTime() - new Date(publishedAt!).getTime())
+    if (!lastEditedAt) return null
+
+    const diffMs = Math.abs(new Date(lastEditedAt).getTime() - new Date(publishedAt).getTime())
     const isEdited = diffMs > 1000
 
     if (!isEdited) return null
@@ -36,7 +38,7 @@ export const PublishedPostEditedIndicator = ({
                     <dt className='text-xs text-muted-foreground'>Опубликован</dt>
                     <dd className='text-xs'>{getAtDate(publishedAt, ' в ')}</dd>
                     <dt className='text-xs text-muted-foreground'>Обновлён</dt>
-                    <dd className='text-xs'>{getAtDate(updatedAt, ' в ')}</dd>
+                    <dd className='text-xs'>{getAtDate(lastEditedAt, ' в ')}</dd>
                 </dl>
             </HoverCardContent>
         </HoverCard>

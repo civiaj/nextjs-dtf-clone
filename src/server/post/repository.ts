@@ -6,13 +6,15 @@ import { Post, postSelect, Prisma, prisma, User } from '@/shared/services/prisma
 import { TPostData, TPostSelect } from '@/shared/types/post.types'
 import {
     DeletePostDTO,
-    GetOwnerDraftsDTO,
     GetFeedPostsDTO,
+    GetOwnerDraftsDTO,
     GetUserPostsDTO,
     PublishPostDTO,
     UpdatePostDTO
 } from '@/shared/validation/post.schema'
 import { IPostRepository } from './types'
+import { applyFeedSort, applyUserPostsSort } from './utils/applySort'
+import { transformPost } from './utils/transformPost'
 
 export class PostRepository implements IPostRepository {
     async getById(id: Post['id']) {
@@ -42,9 +44,12 @@ export class PostRepository implements IPostRepository {
         return posts.map(transformPost).filter(Boolean) as TPostData[]
     }
 
-    async getFeedPosts({ sortBy: _, cursor }: GetFeedPostsDTO, userId?: User['id']) {
+    async getFeedPosts({ sortBy, cursor }: GetFeedPostsDTO, userId?: User['id']) {
         const limit = 10
-        const where: Prisma.PostWhereInput = { status: 'PUBLISHED' }
+        const where: Prisma.PostWhereInput = {
+            status: 'PUBLISHED',
+            publishedAt: { not: null }
+        }
 
         if (userId) {
             where.NOT = {
@@ -55,9 +60,12 @@ export class PostRepository implements IPostRepository {
             }
         }
 
+        const now = new Date()
+        const orderBy = applyFeedSort({ where, sortBy, userId, now })
+
         const posts = await prisma.post.findMany({
             where,
-            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            orderBy,
             take: limit + 1,
             skip: cursor ? 1 : 0,
             select: postSelect,
@@ -73,13 +81,15 @@ export class PostRepository implements IPostRepository {
         }
     }
 
-    async getUserPosts({ sortBy: _, userId, cursor }: GetUserPostsDTO) {
+    async getUserPosts({ sortBy, userId, cursor }: GetUserPostsDTO) {
         const limit = 10
         const where: Prisma.PostWhereInput = { status: 'PUBLISHED', userId }
+        const now = new Date()
+        const orderBy = applyUserPostsSort({ where, sortBy, now })
 
         const posts = await prisma.post.findMany({
             where,
-            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            orderBy,
             take: limit + 1,
             skip: cursor ? 1 : 0,
             select: postSelect,
@@ -116,9 +126,10 @@ export class PostRepository implements IPostRepository {
     }
 
     async publish({ id }: PublishPostDTO, userId: User['id']) {
+        const now = new Date()
         const post = await prisma.post.update({
             where: { id, userId, status: 'DRAFT' },
-            data: { status: 'PUBLISHED', publishedAt: new Date() },
+            data: { status: 'PUBLISHED', publishedAt: now, lastEditedAt: now },
             select: postSelect
         })
 
@@ -174,6 +185,7 @@ export class PostRepository implements IPostRepository {
                     data: {
                         title,
                         slug,
+                        lastEditedAt: activePost.status === 'PUBLISHED' ? new Date() : undefined,
                         blocks: { create: { userId, data: blocks } }
                     },
                     select: postSelect
@@ -246,11 +258,3 @@ export class PostRepository implements IPostRepository {
         })
     }
 }
-
-const transformPost = (data: TPostSelect | null): TPostData | null =>
-    data
-        ? {
-              ...data,
-              blocks: data.blocks.flatMap(({ data }) => data) as TPostData['blocks']
-          }
-        : null

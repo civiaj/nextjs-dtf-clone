@@ -1,3 +1,4 @@
+import { IRankingService } from '@/server/ranking'
 import { TBookmarkConfig } from '@/shared/types/bookmark.types'
 import { TPageResult } from '@/shared/types/common.types'
 import { BookmarkTarget } from '@/shared/validation/bookmark.schema'
@@ -10,13 +11,18 @@ import {
 } from './types'
 
 export class BookmarkService implements IBookmarkService {
-    constructor(private readonly repositories: IBookmarkRepositories) {}
+    constructor(
+        private readonly repositories: IBookmarkRepositories,
+        private readonly rankingService: IRankingService
+    ) {}
 
     async update<T extends BookmarkTarget>({
         target,
         ...payload
     }: TUpdateBookmarkPayload & { target: T }): Promise<TBookmarkConfig[T]['select'] | void> {
-        return await this.repositories[target].update(payload)
+        const result = await this.repositories[target].update(payload)
+        await this.rankingService.recalculateByTarget(target, payload.targetId)
+        return result
     }
 
     async getAll<T extends BookmarkTarget>({

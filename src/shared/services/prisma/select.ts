@@ -41,6 +41,9 @@ export const postSelect = Prisma.validator<Prisma.PostSelect>()({
     slug: true,
     status: true,
     title: true,
+    hotScore: true,
+    hotnessScore: true,
+    lastEditedAt: true,
     updatedAt: true,
     createdAt: true,
     publishedAt: true
@@ -67,6 +70,8 @@ export const commentSelect = Prisma.validator<Prisma.CommentSelect>()({
     user: { select: userSelect },
     json: true,
     media: true,
+    hotScore: true,
+    hotnessScore: true,
     createdAt: true,
     parentId: true,
     isDeleted: true,

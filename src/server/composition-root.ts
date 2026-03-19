@@ -8,6 +8,7 @@ import { FollowUserRepository, FollowUserService } from '@/server/follow-user'
 import { MutePostRepository, MuteService, MuteUserRepository } from '@/server/mute'
 import { PostEnricher, PostRepository } from '@/server/post'
 import { PostService } from '@/server/post/service'
+import { RankingService, startRankingHotnessCron } from '@/server/ranking'
 import {
     ReactionCommentRepository,
     ReactionPostRepository,
@@ -33,16 +34,23 @@ const tokenRepository = new TokenRepository()
 const userRepository = new UserRepository()
 
 //services
+const rankingService = new RankingService()
+startRankingHotnessCron(rankingService)
+
 const muteService = new MuteService({ POST: mutePostRepository, USER: muteUserRepository })
 const followUserService = new FollowUserService(followUserRepository)
 const reactionService = new ReactionService(
     { COMMENT: reactionCommentRepository, POST: reactionPostRepository },
-    reactionValueRepository
+    reactionValueRepository,
+    rankingService
 )
-const bookmarkService = new BookmarkService({
-    COMMENT: bookmarkCommentRepository,
-    POST: bookmarkPostRepository
-})
+const bookmarkService = new BookmarkService(
+    {
+        COMMENT: bookmarkCommentRepository,
+        POST: bookmarkPostRepository
+    },
+    rankingService
+)
 const userEnricher = new UserEnricher(followUserService, muteService)
 const userService = new UserService(userRepository, muteService, followUserService, userEnricher)
 const commentEnricher = new CommentEnricher(
@@ -56,7 +64,8 @@ const commentService = new CommentService(
     bookmarkService,
     reactionService,
     userService,
-    commentEnricher
+    commentEnricher,
+    rankingService
 )
 const postEnricher = new PostEnricher(
     followUserService,
@@ -83,6 +92,7 @@ export {
     commentService,
     tokenService,
     bookmarkService,
-    muteService
+    muteService,
+    rankingService
 }
 export { mediaService } from '@/server/media'
