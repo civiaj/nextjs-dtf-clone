@@ -28,7 +28,7 @@ export async function generateMetadata(props: TParamsSlug): Promise<Metadata> {
             type: 'article',
             url: `${process.env.NEXT_PUBLIC_APP_URL}/${PATH.POST}/${post.slug}`,
             publishedTime: post.publishedAt?.toString(),
-            modifiedTime: post.updatedAt?.toString()
+            modifiedTime: (post.lastEditedAt ?? post.publishedAt)?.toString()
         },
         twitter: {
             card: 'summary_large_image',

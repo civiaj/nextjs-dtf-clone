@@ -1,3 +1,4 @@
+import { IRankingService } from '@/server/ranking'
 import { TPageResult } from '@/shared/types/common.types'
 import { TReactionConfig, TReactionMetrics, ReactionTarget } from '@/shared/types/reaction.types'
 import {
@@ -12,17 +13,23 @@ import {
 export class ReactionService implements IReactionService {
     constructor(
         private repositories: IReactionRepositories,
-        private valueRepository: IReactionValueRepository
+        private valueRepository: IReactionValueRepository,
+        private rankingService: IRankingService
     ) {}
     async update<T extends ReactionTarget>({
         target,
         ...payload
     }: TUpdateReactionPayload & { target: T }): Promise<TReactionMetrics> {
         await this.repositories[target].update(payload)
-        const metrics = await this.repositories[target].getMetrics({
-            ids: [payload.targetId],
-            userId: payload.userId
-        })
+
+        const [metrics, _] = await Promise.all([
+            this.repositories[target].getMetrics({
+                ids: [payload.targetId],
+                userId: payload.userId
+            }),
+            this.rankingService.recalculateByTarget(target, payload.targetId)
+        ])
+
         return metrics.get(payload.targetId)!
     }
 

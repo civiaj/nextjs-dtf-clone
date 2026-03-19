@@ -1,0 +1,3 @@
+-- No-op migration.
+-- Ranking fields/indexes are included in baseline init migration:
+-- prisma/migrations/20260301000000_init/migration.sql

@@ -1,5 +1,4 @@
 import { ApiError } from '@/lib/error'
-import { ICommentRepository } from '@/server/comment/types'
 import { ERROR_MESSAGES } from '@/shared/constants'
 import { commentSelect, Post, Prisma, prisma, User } from '@/shared/services/prisma'
 import { TCommentData } from '@/shared/types/comment.types'
@@ -12,6 +11,8 @@ import {
     GetPostThreadDTO,
     GetUserCommentsDTO
 } from '@/shared/validation/comment.schema'
+import { ICommentRepository } from './types'
+import { getPostCommentsOrderBy, getUserCommentsOrderBy } from './utils/applySort'
 
 export class CommentRepository implements ICommentRepository {
     async createOne(dto: CreateCommentDTO, userId: TUser['id']) {
@@ -99,14 +100,11 @@ export class CommentRepository implements ICommentRepository {
         postId,
         cursor,
         parentId = null,
-        sortBy: _
+        sortBy
     }: GetPostCommentsDTO) {
         const rootLimit = 10
         const repliesLimit = 4
-
-        const orderBy:
-            | Prisma.CommentOrderByWithRelationInput
-            | Prisma.CommentOrderByWithRelationInput[] = [{ createdAt: 'desc' }, { id: 'desc' }]
+        const orderBy = getPostCommentsOrderBy(sortBy)
 
         const rootsResult = await prisma.comment.findMany({
             where: { postId, parentId },
@@ -208,11 +206,15 @@ export class CommentRepository implements ICommentRepository {
         })) as TCommentData[]
     }
 
-    async findUserComments({ userId, cursor, sortBy: _ }: GetUserCommentsDTO) {
+    async findUserComments({ userId, cursor, sortBy }: GetUserCommentsDTO) {
         const limit = 10
+        const where: Prisma.CommentWhereInput = { userId }
+        const now = new Date()
+        const orderBy = getUserCommentsOrderBy({ where, sortBy, now })
+
         const comments = await prisma.comment.findMany({
-            where: { userId },
-            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            where,
+            orderBy,
             cursor: cursor ? { id: cursor } : undefined,
             skip: cursor ? 1 : 0,
             take: limit + 1,

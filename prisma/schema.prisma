@@ -56,6 +56,9 @@ model Post {
   user              User           @relation(fields: [userId], references: [id])
   blocks            Blocks[]
   publishedAt       DateTime?
+  lastEditedAt      DateTime?
+  hotScore          Float          @default(0)
+  hotnessScore      Float          @default(0)
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   comments          Comment[]
@@ -66,6 +69,12 @@ model Post {
   @@unique([slug])
   @@index([slug])
   @@index([userId])
+  @@index([status, publishedAt(sort: Desc), id(sort: Desc)])
+  @@index([status, hotnessScore(sort: Desc), publishedAt(sort: Desc), id(sort: Desc)])
+  @@index([status, hotScore(sort: Desc), publishedAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, status, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, status, hotnessScore(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, status, hotScore(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model Blocks {
@@ -143,6 +152,8 @@ model Comment {
 
   isDeleted  Boolean @default(false)
   replyCount Int     @default(0)
+  hotScore   Float   @default(0)
+  hotnessScore Float @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -160,6 +171,11 @@ model Comment {
   @@index([postId])
   @@index([userId])
   @@index([parentId])
+  @@index([postId, parentId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([postId, parentId, hotnessScore(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, hotnessScore(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
+  @@index([userId, hotScore(sort: Desc), createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model AvatarColor {

@@ -103,7 +103,7 @@ export const PublishedPostItem = memo(
                     descriptionExtra={
                         <PublishedPostEditedIndicator
                             publishedAt={post.publishedAt}
-                            updatedAt={post.updatedAt}
+                            lastEditedAt={post.lastEditedAt}
                         />
                     }
                 />

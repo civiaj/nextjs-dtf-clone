@@ -2,7 +2,7 @@ import { PATH } from '@/shared/constants'
 import { TComment } from '@/shared/types/comment.types'
 import { TUser } from '@/shared/types/user.types'
 import { UserAvatar } from '@/shared/ui/user-avatar'
-import { getAtDate } from '@/shared/utils/date.utils'
+import { getSinceDate } from '@/shared/utils/date.utils'
 import { CommentItemDropdown, CommentItemDropdownProps } from './CommentItemDropdown'
 
 type CommentItemHeaderProps = {
@@ -32,7 +32,9 @@ export const CommentItemHeader = ({
                         href={`${PATH.USER}/${user.id}`}
                         name={user.name}
                     />
-                    <UserAvatar.Extra description={getAtDate(createdAt)}>{extra}</UserAvatar.Extra>
+                    <UserAvatar.Extra description={getSinceDate(createdAt)}>
+                        {extra}
+                    </UserAvatar.Extra>
                 </UserAvatar.Details>
             </UserAvatar>
             {dropdownActions ? <CommentItemDropdown actions={dropdownActions} /> : null}
