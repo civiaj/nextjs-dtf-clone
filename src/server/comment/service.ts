@@ -1,5 +1,6 @@
 import { ApiError } from '@/lib/error'
 import { IBookmarkService } from '@/server/bookmark'
+import { IRankingService } from '@/server/ranking'
 import { IReactionService } from '@/server/reaction'
 import { IUserService } from '@/server/user'
 import { ERROR_MESSAGES } from '@/shared/constants'
@@ -23,7 +24,8 @@ export class CommentService implements ICommentService {
         private bookmarkService: IBookmarkService,
         private reactionService: IReactionService,
         private userService: IUserService,
-        private commentEnricher: ICommentEnricher
+        private commentEnricher: ICommentEnricher,
+        private rankingService: IRankingService
     ) {}
 
     async getByIds(ids: TComment['id'][], userId?: User['id']) {
@@ -35,6 +37,10 @@ export class CommentService implements ICommentService {
         const mentionIds = commentDocumentHandler.extractMentionIds(dto.json)
         await this.validateMentionedUsers(mentionIds)
         const comment = await this.commentRepository.createOne(dto, userId)
+        await Promise.all([
+            this.rankingService.recalculatePost(comment.postId),
+            this.rankingService.recalculateParentCommentByReply(comment.id)
+        ])
         return await this.commentEnricher.enrich(comment, userId)
     }
 
