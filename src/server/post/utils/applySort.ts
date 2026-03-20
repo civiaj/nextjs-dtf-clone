@@ -1,7 +1,6 @@
 import {
     DAY_WINDOW_HOURS,
     HOTNESS_TIME_DELAY_HOURS,
-    HOTNESS_WINDOW_HOURS,
     MONTH_WINDOW_HOURS,
     subtractHours,
     WEEK_WINDOW_HOURS,
@@ -41,7 +40,6 @@ export const applyFeedSort = ({
     switch (sortBy) {
         case 'hotness': {
             where.publishedAt = {
-                gte: subtractHours(now, HOTNESS_WINDOW_HOURS),
                 lte: subtractHours(now, HOTNESS_TIME_DELAY_HOURS)
             }
             return POST_BY_HOTNESS_ORDER
@@ -102,7 +100,6 @@ export const applyFeedSort = ({
                 }
             }
             where.publishedAt = {
-                gte: subtractHours(now, HOTNESS_WINDOW_HOURS),
                 lte: subtractHours(now, HOTNESS_TIME_DELAY_HOURS)
             }
 
@@ -129,7 +126,6 @@ export const applyUserPostsSort = ({
         }
         case 'hotness': {
             where.publishedAt = {
-                gte: subtractHours(now, WEEK_WINDOW_HOURS),
                 lte: subtractHours(now, HOTNESS_TIME_DELAY_HOURS)
             }
             return POST_BY_HOTNESS_ORDER

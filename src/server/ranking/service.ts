@@ -1,6 +1,17 @@
 import { Comment, Post, prisma } from '@/shared/services/prisma'
-import { HOTNESS_REFRESH_WINDOW_HOURS, HOTNESS_TIME_DELAY_HOURS } from './constants'
 import {
+    DAY_WINDOW_HOURS,
+    HOTNESS_REFRESH_BATCH_SIZE,
+    HOTNESS_REFRESH_FRESH_INTERVAL_MINUTES,
+    HOTNESS_REFRESH_RECENT_INTERVAL_MINUTES,
+    HOTNESS_REFRESH_STALE_INTERVAL_MINUTES,
+    HOTNESS_TIME_DELAY_HOURS,
+    HOUR_IN_MS,
+    MONTH_WINDOW_HOURS,
+    WEEK_WINDOW_HOURS
+} from './constants'
+import {
+    addMinutes,
     calculateCommentHotScore,
     calculateHotnessScore,
     calculatePostHotScore,
@@ -8,7 +19,81 @@ import {
 } from './formula'
 import { IRankingService, THotnessRefreshResult, TRankingTarget } from './types'
 
+type TPostRankingRow = {
+    id: number
+    hotScore: number
+    publishedAt: Date | null
+    createdAt: Date
+}
+
 export class RankingService implements IRankingService {
+    private getErrorMessage(error: unknown) {
+        return error instanceof Error ? error.message : String(error)
+    }
+
+    private logBestEffortFailure(
+        operation: string,
+        context: Record<string, unknown>,
+        error: unknown
+    ) {
+        console.error(
+            `[ranking] ${operation} failed (${Object.entries(context)
+                .map(([key, value]) => `${key}=${value}`)
+                .join(', ')}): ${this.getErrorMessage(error)}`
+        )
+    }
+
+    private getPostRankedAt(post: Pick<TPostRankingRow, 'publishedAt' | 'createdAt'>) {
+        return post.publishedAt ?? post.createdAt
+    }
+
+    private calculateNextHotnessRefreshAt({
+        hotScore,
+        rankedAt,
+        now
+    }: {
+        hotScore: number
+        rankedAt: Date
+        now: Date
+    }) {
+        if (hotScore <= 0) return null
+
+        const ageHours = Math.max(0, (now.getTime() - rankedAt.getTime()) / HOUR_IN_MS)
+
+        if (ageHours >= MONTH_WINDOW_HOURS) return null
+        if (ageHours < DAY_WINDOW_HOURS) {
+            return addMinutes(now, HOTNESS_REFRESH_FRESH_INTERVAL_MINUTES)
+        }
+        if (ageHours < WEEK_WINDOW_HOURS) {
+            return addMinutes(now, HOTNESS_REFRESH_RECENT_INTERVAL_MINUTES)
+        }
+
+        return addMinutes(now, HOTNESS_REFRESH_STALE_INTERVAL_MINUTES)
+    }
+
+    private buildHotnessRefreshData({
+        hotScore,
+        rankedAt,
+        now
+    }: {
+        hotScore: number
+        rankedAt: Date
+        now: Date
+    }) {
+        return {
+            hotnessScore: calculateHotnessScore({
+                hotScore,
+                createdAt: rankedAt,
+                now
+            }),
+            nextHotnessRefreshAt: this.calculateNextHotnessRefreshAt({
+                hotScore,
+                rankedAt,
+                now
+            })
+        }
+    }
+
     async recalculateByTarget(target: TRankingTarget, targetId: number) {
         switch (target) {
             case 'COMMENT': {
@@ -27,24 +112,27 @@ export class RankingService implements IRankingService {
 
     async refreshHotnessScores(): Promise<THotnessRefreshResult> {
         const now = new Date()
+        const delayedUntil = subtractHours(now, HOTNESS_TIME_DELAY_HOURS)
+
         const [posts, comments] = await Promise.all([
             prisma.post.findMany({
                 where: {
                     status: 'PUBLISHED',
-                    publishedAt: {
-                        gte: subtractHours(now, HOTNESS_REFRESH_WINDOW_HOURS),
-                        lte: subtractHours(now, HOTNESS_TIME_DELAY_HOURS)
-                    },
-                    OR: [{ hotScore: { gt: 0 } }, { hotnessScore: { gt: 0 } }]
+                    publishedAt: { not: null, lte: delayedUntil },
+                    nextHotnessRefreshAt: { lte: now }
                 },
+                orderBy: [{ nextHotnessRefreshAt: 'asc' }, { id: 'asc' }],
+                take: HOTNESS_REFRESH_BATCH_SIZE,
                 select: { id: true, hotScore: true, publishedAt: true, createdAt: true }
             }),
             prisma.comment.findMany({
                 where: {
                     isDeleted: false,
-                    createdAt: { gte: subtractHours(now, HOTNESS_REFRESH_WINDOW_HOURS) },
-                    OR: [{ hotScore: { gt: 0 } }, { hotnessScore: { gt: 0 } }]
+                    createdAt: { lte: delayedUntil },
+                    nextHotnessRefreshAt: { lte: now }
                 },
+                orderBy: [{ nextHotnessRefreshAt: 'asc' }, { id: 'asc' }],
+                take: HOTNESS_REFRESH_BATCH_SIZE,
                 select: { id: true, hotScore: true, createdAt: true }
             })
         ])
@@ -52,28 +140,25 @@ export class RankingService implements IRankingService {
         if (!posts.length && !comments.length) return { postCount: 0, commentCount: 0 }
 
         await prisma.$transaction([
-            ...posts.map((post) =>
-                prisma.post.update({
+            ...posts.map((post) => {
+                const rankedAt = this.getPostRankedAt(post)
+                return prisma.post.update({
                     where: { id: post.id },
-                    data: {
-                        hotnessScore: calculateHotnessScore({
-                            hotScore: post.hotScore,
-                            createdAt: post.publishedAt ?? post.createdAt,
-                            now
-                        })
-                    }
+                    data: this.buildHotnessRefreshData({
+                        hotScore: post.hotScore,
+                        rankedAt,
+                        now
+                    })
                 })
-            ),
+            }),
             ...comments.map((comment) =>
                 prisma.comment.update({
                     where: { id: comment.id },
-                    data: {
-                        hotnessScore: calculateHotnessScore({
-                            hotScore: comment.hotScore,
-                            createdAt: comment.createdAt,
-                            now
-                        })
-                    }
+                    data: this.buildHotnessRefreshData({
+                        hotScore: comment.hotScore,
+                        rankedAt: comment.createdAt,
+                        now
+                    })
                 })
             )
         ])
@@ -85,21 +170,33 @@ export class RankingService implements IRankingService {
     }
 
     async recalculatePost(postId: Post['id']) {
-        await this.recalculatePosts([postId])
+        try {
+            await this.recalculatePosts([postId])
+        } catch (error) {
+            this.logBestEffortFailure('recalculatePost', { postId }, error)
+        }
     }
 
     async recalculateComment(commentId: Comment['id']) {
-        await this.recalculateComments([commentId])
+        try {
+            await this.recalculateComments([commentId])
+        } catch (error) {
+            this.logBestEffortFailure('recalculateComment', { commentId }, error)
+        }
     }
 
     async recalculateParentCommentByReply(commentId: Comment['id']) {
-        const comment = await prisma.comment.findUnique({
-            where: { id: commentId },
-            select: { parentId: true }
-        })
+        try {
+            const comment = await prisma.comment.findUnique({
+                where: { id: commentId },
+                select: { parentId: true }
+            })
 
-        if (!comment?.parentId) return
-        await this.recalculateComments([comment.parentId])
+            if (!comment?.parentId) return
+            await this.recalculateComments([comment.parentId])
+        } catch (error) {
+            this.logBestEffortFailure('recalculateParentCommentByReply', { commentId }, error)
+        }
     }
 
     private async recalculatePosts(postIds: Post['id'][]) {
@@ -148,16 +245,16 @@ export class RankingService implements IRankingService {
                     bookmarkCount: bookmarkCountMap.get(post.id) ?? 0,
                     commentCount: commentCountMap.get(post.id) ?? 0
                 })
-
-                const hotnessScore = calculateHotnessScore({
+                const rankedAt = this.getPostRankedAt(post)
+                const { hotnessScore, nextHotnessRefreshAt } = this.buildHotnessRefreshData({
                     hotScore,
-                    createdAt: post.publishedAt ?? post.createdAt,
+                    rankedAt,
                     now
                 })
 
                 return prisma.post.update({
                     where: { id: post.id },
-                    data: { hotScore, hotnessScore }
+                    data: { hotScore, hotnessScore, nextHotnessRefreshAt }
                 })
             })
         )
@@ -216,16 +313,15 @@ export class RankingService implements IRankingService {
                     bookmarkCount: bookmarkCountMap.get(comment.id) ?? 0,
                     replyCount: directReplyCountMap.get(comment.id) ?? 0
                 })
-
-                const hotnessScore = calculateHotnessScore({
+                const { hotnessScore, nextHotnessRefreshAt } = this.buildHotnessRefreshData({
                     hotScore,
-                    createdAt: comment.createdAt,
+                    rankedAt: comment.createdAt,
                     now
                 })
 
                 return prisma.comment.update({
                     where: { id: comment.id },
-                    data: { hotScore, hotnessScore }
+                    data: { hotScore, hotnessScore, nextHotnessRefreshAt }
                 })
             })
         )

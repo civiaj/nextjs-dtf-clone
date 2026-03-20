@@ -24,7 +24,7 @@ export const getPostCommentsOrderBy = (
 ): Prisma.CommentOrderByWithRelationInput[] => {
     switch (sortBy) {
         case 'hotness':
-            return COMMENT_BY_HOTNESS_ORDER
+            return COMMENT_BY_HOT_SCORE_ORDER
         case 'new':
         default:
             return COMMENT_BY_DATE_ORDER

@@ -102,6 +102,10 @@ export class CommentService implements ICommentService {
 
     async softDeleteOne(dto: DeleteCommentDTO, userId: User['id']) {
         const result = await this.commentRepository.softDeleteOne(dto, userId)
+        await Promise.all([
+            this.rankingService.recalculatePost(result.postId),
+            this.rankingService.recalculateParentCommentByReply(result.id)
+        ])
         return await this.commentEnricher.enrich(result)
     }
 

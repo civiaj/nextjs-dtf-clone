@@ -3,6 +3,7 @@ import {
     HOTNESS_BASE_OFFSET_HOURS,
     HOTNESS_GRAVITY,
     HOUR_IN_MS,
+    MINUTE_IN_MS,
     POST_RANKING_WEIGHTS
 } from './constants'
 
@@ -47,3 +48,6 @@ export const calculateHotnessScore = ({ hotScore, createdAt, now = new Date() }:
 
 export const subtractHours = (date: Date, hours: number) =>
     new Date(date.getTime() - hours * HOUR_IN_MS)
+
+export const addMinutes = (date: Date, minutes: number) =>
+    new Date(date.getTime() + minutes * MINUTE_IN_MS)
